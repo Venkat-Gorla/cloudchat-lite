@@ -48,23 +48,10 @@ const writeTestData = async () => {
   const requests = [];
 
   for (const convo of testData) {
-    let ts = now;
-
-    for (const msg of convo.messages) {
-      requests.push({
-        PutRequest: {
-          Item: marshall({
-            ConversationId: convo.conversationId,
-            MessageSortKey: `MSG#${ts}`,
-            Sender: msg.sender,
-            Message: msg.text,
-            Timestamp: ts,
-            Type: "MESSAGE",
-          }),
-        },
-      });
-      ts += 1000;
-    }
+    requests.push(
+      ...createMessageItems(convo.conversationId, convo.messages, now)
+    );
+    const ts = now + convo.messages.length * 1000; // Last message timestamp
 
     for (const user of convo.participants) {
       requests.push({
@@ -86,6 +73,22 @@ const writeTestData = async () => {
   const batch = { RequestItems: { [TABLE_NAME]: requests } };
   await ddb.send(new BatchWriteItemCommand(batch));
   console.log("✅ Test data written.");
+};
+
+const createMessageItems = (conversationId, messages, startTimestamp) => {
+  let ts = startTimestamp;
+  return messages.map((msg) => {
+    const item = marshall({
+      ConversationId: conversationId,
+      MessageSortKey: `MSG#${ts}`,
+      Sender: msg.sender,
+      Message: msg.text,
+      Timestamp: ts,
+      Type: "MESSAGE",
+    });
+    ts += 1000;
+    return { PutRequest: { Item: item } };
+  });
 };
 
 const fetchConversationsForUser = async (username) => {
