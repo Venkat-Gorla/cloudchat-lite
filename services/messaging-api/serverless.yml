@@ -10,27 +10,27 @@ resources:
     MessagesTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Messages
+        TableName: cloudchat-messages
         AttributeDefinitions:
-          - AttributeName: PK
+          - AttributeName: ConversationId
             AttributeType: S
-          - AttributeName: SK
+          - AttributeName: MessageSortKey
             AttributeType: S
-          - AttributeName: GSI1PK
+          - AttributeName: UserId
             AttributeType: S
-          - AttributeName: GSI1SK
+          - AttributeName: ConversationIndex
             AttributeType: S
         KeySchema:
-          - AttributeName: PK
+          - AttributeName: ConversationId
             KeyType: HASH
-          - AttributeName: SK
+          - AttributeName: MessageSortKey
             KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: GSI1
+          - IndexName: UserConversationsIndex
             KeySchema:
-              - AttributeName: GSI1PK
+              - AttributeName: UserId
                 KeyType: HASH
-              - AttributeName: GSI1SK
+              - AttributeName: ConversationIndex
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
