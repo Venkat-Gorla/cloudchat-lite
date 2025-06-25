@@ -1,0 +1,21 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Serverless Framework
+.serverless/
+.cache/
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# AWS credentials or sensitive config
+*.env.local
+*.aws-credentials
+
+*.swp
+*.swo
