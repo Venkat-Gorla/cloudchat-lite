@@ -1,5 +1,3 @@
-// integration-test.js
-
 import {
   DynamoDBClient,
   BatchWriteItemCommand,
@@ -7,7 +5,7 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 
-// vegorla: move to env constants and refactor functions
+// vegorla: move to env constants
 const REGION = "ap-south-1";
 const TABLE_NAME = "cloudchat-messages";
 const GSI_NAME = "UserConversationsIndex";
@@ -51,28 +49,22 @@ const writeTestData = async () => {
     requests.push(
       ...createMessageItems(convo.conversationId, convo.messages, now)
     );
+    const lastMessage = convo.messages[convo.messages.length - 1];
     const ts = now + convo.messages.length * 1000; // Last message timestamp
 
-    for (const user of convo.participants) {
-      requests.push({
-        PutRequest: {
-          Item: marshall({
-            ConversationId: `META#${user}`,
-            MessageSortKey: convo.conversationId,
-            UserId: `USER#${user}`,
-            ConversationIndex: convo.conversationId,
-            LastMessage: convo.messages[convo.messages.length - 1].text,
-            LastTimestamp: ts,
-            Type: "CONV_METADATA",
-          }),
-        },
-      });
-    }
+    requests.push(
+      ...createMetadataItems(
+        convo.participants,
+        convo.conversationId,
+        lastMessage.text,
+        ts
+      )
+    );
   }
 
   const batch = { RequestItems: { [TABLE_NAME]: requests } };
   await ddb.send(new BatchWriteItemCommand(batch));
-  console.log("✅ Test data written.");
+  console.log("Test data written.");
 };
 
 const createMessageItems = (conversationId, messages, startTimestamp) => {
@@ -89,6 +81,22 @@ const createMessageItems = (conversationId, messages, startTimestamp) => {
     ts += 1000;
     return { PutRequest: { Item: item } };
   });
+};
+
+const createMetadataItems = (participants, convoId, lastMsgText, timestamp) => {
+  return participants.map((user) => ({
+    PutRequest: {
+      Item: marshall({
+        ConversationId: `META#${user}`,
+        MessageSortKey: convoId,
+        UserId: `USER#${user}`,
+        ConversationIndex: convoId,
+        LastMessage: lastMsgText,
+        LastTimestamp: timestamp,
+        Type: "CONV_METADATA",
+      }),
+    },
+  }));
 };
 
 const fetchConversationsForUser = async (username) => {
@@ -122,7 +130,7 @@ const fetchMessagesForConversation = async (conversationId) => {
 (async () => {
   await writeTestData();
 
-  console.log("\n💬 Fetching conversations for user: alice\n");
+  console.log("\nFetching conversations for user: alice\n");
   const convos = await fetchConversationsForUser("alice");
   for (const convo of convos) {
     console.log("Convo:", convo.ConversationIndex);
