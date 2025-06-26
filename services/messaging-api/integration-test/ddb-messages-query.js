@@ -37,10 +37,14 @@ const fetchMessagesForConversation = async (conversationId) => {
 };
 
 // vegorla: change to command line parameter
-// log no results case
 (async () => {
   console.log("\nFetching conversations for user: alice\n");
   const convos = await fetchConversationsForUser("alice");
+  if (convos.length === 0) {
+    console.log("No conversations found for user alice.");
+    return;
+  }
+
   for (const convo of convos) {
     console.log("Convo:", convo.ConversationIndex);
     const messages = await fetchMessagesForConversation(
