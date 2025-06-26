@@ -4,11 +4,12 @@ import {
   QueryCommand,
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import {
+  REGION,
+  MESSAGES_TABLE_NAME,
+  MESSAGES_GSI_NAME,
+} from "../constants.js";
 
-// vegorla: move to env constants
-const REGION = "ap-south-1";
-const TABLE_NAME = "cloudchat-messages";
-const GSI_NAME = "UserConversationsIndex";
 const ddb = new DynamoDBClient({ region: REGION });
 
 const testData = [
@@ -62,7 +63,7 @@ const writeTestData = async () => {
     );
   }
 
-  const batch = { RequestItems: { [TABLE_NAME]: requests } };
+  const batch = { RequestItems: { [MESSAGES_TABLE_NAME]: requests } };
   await ddb.send(new BatchWriteItemCommand(batch));
   console.log("Test data written.");
 };
@@ -102,8 +103,8 @@ const createMetadataItems = (participants, convoId, lastMsgText, timestamp) => {
 const fetchConversationsForUser = async (username) => {
   const res = await ddb.send(
     new QueryCommand({
-      TableName: TABLE_NAME,
-      IndexName: GSI_NAME,
+      TableName: MESSAGES_TABLE_NAME,
+      IndexName: MESSAGES_GSI_NAME,
       KeyConditionExpression: "UserId = :u",
       ExpressionAttributeValues: marshall({ ":u": `USER#${username}` }),
     })
@@ -115,7 +116,7 @@ const fetchConversationsForUser = async (username) => {
 const fetchMessagesForConversation = async (conversationId) => {
   const res = await ddb.send(
     new QueryCommand({
-      TableName: TABLE_NAME,
+      TableName: MESSAGES_TABLE_NAME,
       KeyConditionExpression:
         "ConversationId = :c AND begins_with(MessageSortKey, :msg)",
       ExpressionAttributeValues: marshall({
