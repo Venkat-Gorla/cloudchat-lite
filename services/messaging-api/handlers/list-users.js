@@ -8,7 +8,6 @@ const client = new CognitoIdentityProviderClient({ region: AWS_REGION });
 
 export const handler = async (event) => {
   const token = extractAccessToken(event.headers);
-
   if (!token) {
     return {
       statusCode: 401,
@@ -27,18 +26,7 @@ export const handler = async (event) => {
     });
 
     const { Users } = await client.send(command);
-
-    const results = Users.map((user) => {
-      const attrs = Object.fromEntries(
-        user.Attributes.map((a) => [a.Name, a.Value])
-      );
-      return {
-        username: user.Username,
-        name: attrs.name || "",
-        email: attrs.email || "",
-        status: user.UserStatus,
-      };
-    });
+    const results = extractResults(Users);
 
     return {
       statusCode: 200,
@@ -59,4 +47,18 @@ function extractAccessToken(headers = {}) {
   const auth = headers.Authorization || headers.authorization;
   if (!auth || !auth.startsWith("Bearer ")) return null;
   return auth.replace("Bearer ", "").trim();
+}
+
+function extractResults(Users) {
+  return Users.map((user) => {
+    const attrs = Object.fromEntries(
+      user.Attributes.map((a) => [a.Name, a.Value])
+    );
+    return {
+      username: user.Username,
+      name: attrs.name || "",
+      email: attrs.email || "",
+      status: user.UserStatus,
+    };
+  });
 }
