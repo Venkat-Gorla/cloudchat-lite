@@ -36,15 +36,24 @@ const fetchMessagesForConversation = async (conversationId) => {
   return res.Items.map(unmarshall);
 };
 
-// vegorla: change to command line parameter
 (async () => {
-  console.log("\nFetching conversations for user: alice\n");
-  const convos = await fetchConversationsForUser("alice");
+  const [, , username] = process.argv;
+  if (!username) {
+    console.error("Usage: node ddb-messages-query.js <username>");
+    process.exit(1);
+  }
+
+  console.log(`\nFetching conversations for user: ${username}\n`);
+  const convos = await fetchConversationsForUser(username);
   if (convos.length === 0) {
-    console.log("No conversations found for user alice.");
+    console.log(`No conversations found for user ${username}.`);
     return;
   }
 
+  await printConversations(convos);
+})();
+
+async function printConversations(convos) {
   for (const convo of convos) {
     console.log("Convo:", convo.ConversationIndex);
     const messages = await fetchMessagesForConversation(
@@ -54,4 +63,4 @@ const fetchMessagesForConversation = async (conversationId) => {
       console.log(` - [${m.Sender}] ${m.Message}`);
     });
   }
-})();
+}
