@@ -17,6 +17,7 @@ Thumbs.db
 # AWS credentials or sensitive config
 *.env.local
 *.aws-credentials
+setup_env.cmd
 
 *.swp
 *.swo
