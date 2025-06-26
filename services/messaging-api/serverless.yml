@@ -35,3 +35,39 @@ resources:
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
+
+    CloudChatUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: cloudchat-users
+        UsernameAttributes: [] # use USERNAME, not email as username
+        AutoVerifiedAttributes: [] # disable email verification
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: true
+        Schema:
+          - Name: email
+            AttributeDataType: String
+            Required: true
+            Mutable: true
+          - Name: name
+            AttributeDataType: String
+            Required: true
+            Mutable: true
+
+    CloudChatUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: cloudchat-app-client
+        UserPoolId:
+          Ref: CloudChatUserPool
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - ADMIN_NO_SRP_AUTH
+
+  Outputs:
+    UserPoolId:
+      Value:
+        Ref: CloudChatUserPool
+    UserPoolClientId:
+      Value:
+        Ref: CloudChatUserPoolClient
