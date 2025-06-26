@@ -36,6 +36,8 @@ const fetchMessagesForConversation = async (conversationId) => {
   return res.Items.map(unmarshall);
 };
 
+// vegorla: change to command line parameter
+// log no results case
 (async () => {
   console.log("\nFetching conversations for user: alice\n");
   const convos = await fetchConversationsForUser("alice");
