@@ -5,12 +5,12 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import {
-  REGION,
+  AWS_REGION,
   MESSAGES_TABLE_NAME,
   MESSAGES_GSI_NAME,
 } from "../constants.js";
 
-const ddb = new DynamoDBClient({ region: REGION });
+const ddb = new DynamoDBClient({ region: AWS_REGION });
 
 const testData = [
   // Conversation 1: alice-bob
