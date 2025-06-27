@@ -44,7 +44,7 @@ export default function ChatList() {
               idx === activeIndex ? "active" : ""
             }`}
           >
-            <div className="fw-bold">{chat.name}</div>
+            <div className="fw-bold">{chat.displayName}</div>
             <div className="text-muted small text-truncate">
               {chat.lastMessage}
             </div>

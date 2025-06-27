@@ -68,8 +68,7 @@ export function fetchMockConversationsForUser(userId) {
     .filter((c) => c.UserId === `USER#${userId}`)
     .sort((a, b) => b.LastTimestamp - a.LastTimestamp)
     .map((c) => ({
-      // vegorla: better name for this field?
-      name: c.MessageSortKey.split("#").slice(1).join(" ↔ "),
+      displayName: c.MessageSortKey.split("#").slice(1).join(" ↔ "),
       lastMessage: c.LastMessage,
       timestamp: c.LastTimestamp,
     }));
