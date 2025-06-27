@@ -20,6 +20,8 @@ export const handler = async (event) => {
 
   try {
     // Skip validation for resume/demo (Cognito verifies token for us)
+    // vegorla: consider full validation of token since this will be open source,
+    // also consider rate limiting for Lambda etc.
     const command = new ListUsersCommand({
       UserPoolId: process.env.COGNITO_USER_POOL_ID,
       Limit: 20, // hardcoded max
