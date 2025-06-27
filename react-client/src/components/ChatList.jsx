@@ -1,10 +1,14 @@
+import { useState } from "react";
+
 export default function ChatList() {
   const chats = [
-    { name: "Active chat", active: true },
+    { name: "Active chat" },
     { name: "Angel One" },
     { name: "Uber Support" },
     { name: "Paytm" },
   ];
+
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <div className="d-flex flex-column h-100">
@@ -21,8 +25,9 @@ export default function ChatList() {
         {chats.map((chat, idx) => (
           <button
             key={idx}
+            onClick={() => setActiveIndex(idx)}
             className={`list-group-item list-group-item-action ${
-              idx === 0 ? "active" : ""
+              idx === activeIndex ? "active" : ""
             }`}
           >
             {chat.name}
