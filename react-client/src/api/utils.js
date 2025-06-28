@@ -4,7 +4,7 @@ export function fetchConversationsForDisplay(conversations, userId) {
     .sort((a, b) => b.LastTimestamp - a.LastTimestamp)
     .map((c) => ({
       id: c.ConversationIndex,
-      displayName: formatDisplayName(c.participants, userId),
+      displayName: formatDisplayName(c.Participants, userId),
       lastMessage: c.LastMessage,
       timestamp: c.LastTimestamp,
     }));

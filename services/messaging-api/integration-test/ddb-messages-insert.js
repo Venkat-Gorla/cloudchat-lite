@@ -8,7 +8,6 @@ import { AWS_REGION, MESSAGES_TABLE_NAME } from "../constants.js";
 const ddb = new DynamoDBClient({ region: AWS_REGION });
 
 // vegorla schema changes: every message should have an id, unrelated to partition or sort key
-// - participants array inside every metadata row
 const testData = [
   // Conversation 1: alice-bob
   {
@@ -50,9 +49,13 @@ const writeTestData = async () => {
     const lastMessage = convo.messages[convo.messages.length - 1];
     const ts = now + convo.messages.length * 1000; // Last message timestamp
 
+    const sortedUniqueParticipants = getSortedUniqueParticipants(
+      convo.participants
+    );
+
     requests.push(
       ...createMetadataItems(
-        convo.participants,
+        sortedUniqueParticipants,
         convo.conversationId,
         lastMessage.text,
         ts
@@ -88,6 +91,7 @@ const createMetadataItems = (participants, convoId, lastMsgText, timestamp) => {
         MessageSortKey: convoId,
         UserId: `USER#${user}`,
         ConversationIndex: convoId,
+        Participants: participants,
         LastMessage: lastMsgText,
         LastTimestamp: timestamp,
         Type: "CONV_METADATA",
@@ -95,6 +99,8 @@ const createMetadataItems = (participants, convoId, lastMsgText, timestamp) => {
     },
   }));
 };
+
+const getSortedUniqueParticipants = (arr) => [...new Set(arr)].sort();
 
 (async () => {
   await writeTestData();
