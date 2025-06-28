@@ -1,16 +1,5 @@
 import { fetchConversationsForDisplay } from "./utils.js";
 
-const mockConversationAliceBob = {
-  ConversationId: "META#bob",
-  MessageSortKey: "CONV#alice#bob",
-  UserId: "USER#bob",
-  ConversationIndex: "CONV#alice#bob",
-  participants: ["alice", "bob"], // <-- New Field, sorted and de-duped
-  LastMessage: "Ping me when you’re free.",
-  LastTimestamp: 1750930251000,
-  Type: "CONV_METADATA",
-};
-
 // Mock data matching DynamoDB schema
 const mockConversations = [
   // Alice's conversations

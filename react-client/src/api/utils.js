@@ -4,10 +4,14 @@ export function fetchConversationsForDisplay(conversations, userId) {
     .sort((a, b) => b.LastTimestamp - a.LastTimestamp)
     .map((c) => ({
       id: c.ConversationIndex,
-      // vegorla: we should ensure input userId is first in the display name,
-      // dynamo table will store them in sorted order
-      displayName: c.MessageSortKey.split("#").slice(1).join(" ↔ "),
+      displayName: formatDisplayName(c.participants, userId),
       lastMessage: c.LastMessage,
       timestamp: c.LastTimestamp,
     }));
+}
+
+export function formatDisplayName(participants, currentUser) {
+  if (!participants.includes(currentUser)) return participants.join(" ↔ ");
+  const others = participants.filter((p) => p !== currentUser).sort();
+  return [currentUser, ...others].join(" ↔ ");
 }
