@@ -56,6 +56,7 @@ const fetchMessagesForConversation = async (conversationId) => {
 async function printConversations(convos) {
   for (const convo of convos) {
     console.log("Convo:", convo.ConversationIndex);
+    console.log(" Participants:", convo.Participants);
     const messages = await fetchMessagesForConversation(
       convo.ConversationIndex
     );
