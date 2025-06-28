@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 // vegorla:
 // - do we need react query for demo project? Number of conversations will be
 //   limited to number of users, so not a big deal.
-// - spinning circle while we fetch conversations 
+// - spinning circle while we fetch conversations
 
 import { fetchConversationsForUser } from "../api/conversations.js";
 
@@ -38,7 +38,7 @@ export default function ChatList() {
       <div className="list-group flex-grow-1 overflow-auto rounded-0">
         {chats.map((chat, idx) => (
           <button
-            key={idx}
+            key={chat.id}
             onClick={() => setActiveIndex(idx)}
             className={`list-group-item list-group-item-action ${
               idx === activeIndex ? "active" : ""
