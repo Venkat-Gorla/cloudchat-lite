@@ -1,11 +1,11 @@
 // vegorla: Improvements:
-// - Add timestamp (relative: “5 min ago”) next to last message preview
 // - Truncate long names/messages with ellipsis text-truncate w-100 d-block
 // - Add hover/focus style to improve accessibility
 // - chat list should always be sorted dynamically when new messages arrive,
 //   it should Not change the current selection though.
 // const sortedChats = [...chats].sort((a, b) => b.timestamp - a.timestamp);
 // Consider collapsing loading/error/empty states into a common <ChatListState /> component
+// Store activeChatId instead of index to preserve selection on reordering
 
 import { useState } from "react";
 import useUserConversations from "../hooks/useUserConversations";
@@ -60,10 +60,15 @@ export default function ChatList() {
                 idx === activeIndex ? "active" : ""
               }`}
             >
-              <div className="fw-bold">{chat.displayName}</div>
-              <div className="text-muted small text-truncate">
-                {chat.lastMessage}
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="fw-bold text-truncate me-2">
+                  {chat.displayName}
+                </div>
+                <div className="text-muted small text-nowrap">
+                  {chat.timestamp}
+                </div>
               </div>
+              <div className="text-muted small">{chat.lastMessage}</div>
             </button>
           ))}
       </div>
