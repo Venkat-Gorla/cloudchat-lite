@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchConversationsForUser } from "../api/conversations";
 
-// vegorla: custom hook unit tests
 export default function useUserConversations(userId) {
   return useQuery({
     queryKey: ["conversations", userId],
