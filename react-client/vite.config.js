@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: "node",
+    environment: "jsdom", // RTL requires a DOM environment
+    setupFiles: "./__tests__/setupTests.js",
   },
 });
