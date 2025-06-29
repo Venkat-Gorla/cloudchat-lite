@@ -10,7 +10,11 @@ export default function LoginPage() {
     "password",
   ]);
 
-  const { handleSubmit: handleLogin, isSubmitting } = useSubmitHandler({
+  const {
+    handleSubmit: handleLogin,
+    isSubmitting,
+    errorMessage,
+  } = useSubmitHandler({
     isFormValid,
     actionFn: login,
     redirectTo: "/chats",
@@ -34,7 +38,13 @@ export default function LoginPage() {
         style={{ width: "100%", minWidth: "320px", maxWidth: "380px" }}
       >
         <h3 className="text-center mb-4">Login</h3>
-        <form onSubmit={handleLogin}>
+        {errorMessage && (
+          <div className="alert alert-danger" role="alert">
+            {errorMessage}
+          </div>
+        )}
+
+        <form onSubmit={(e) => handleLogin(e, formData)}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">
               Username
