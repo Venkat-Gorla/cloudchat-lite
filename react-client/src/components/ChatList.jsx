@@ -1,15 +1,11 @@
-// Improvements:
+// vegorla: Improvements:
 // - Add timestamp (relative: “5 min ago”) next to last message preview
 // - Truncate long names/messages with ellipsis text-truncate w-100 d-block
 // - Add hover/focus style to improve accessibility
 // - chat list should always be sorted dynamically when new messages arrive,
 //   it should Not change the current selection though.
 // const sortedChats = [...chats].sort((a, b) => b.timestamp - a.timestamp);
-
-// vegorla:
-// - do we need react query for demo project? Number of conversations will be
-//   limited to number of users, so not a big deal.
-// - spinning circle while we fetch conversations
+// Consider collapsing loading/error/empty states into a common <ChatListState /> component
 
 import { useState } from "react";
 import useUserConversations from "../hooks/useUserConversations";
@@ -42,15 +38,20 @@ export default function ChatList() {
           </div>
         )}
 
-        {/* vegorla: simulate error and test, update UI when chat list is empty */}
         {isError && (
           <div className="text-center text-secondary py-3">
             Failed to load conversations.
           </div>
         )}
 
+        {!isLoading && !isError && chats.length === 0 && (
+          <div className="text-center text-muted py-3">
+            No conversations found.
+          </div>
+        )}
+
         {!isLoading &&
-          !isError &&
+          chats.length > 0 &&
           chats.map((chat, idx) => (
             <button
               key={chat.id}
