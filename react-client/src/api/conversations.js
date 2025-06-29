@@ -1,6 +1,9 @@
 import { fetchMockConversationsForUser } from "./mock-conversations.js";
 
-// vegorla: make this function async and update UI with spinning circle
-export function fetchConversationsForUser(userId) {
+export async function fetchConversationsForUser(userId, delayMs = 500) {
+  if (delayMs > 0) {
+    await new Promise((res) => setTimeout(res, delayMs)); // simulate delay
+  }
+
   return fetchMockConversationsForUser(userId);
 }
