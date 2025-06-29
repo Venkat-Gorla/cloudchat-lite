@@ -1,6 +1,4 @@
 // vegorla: Improvements:
-// - Truncate long names/messages with ellipsis text-truncate w-100 d-block
-// - Add hover/focus style to improve accessibility
 // - chat list should always be sorted dynamically when new messages arrive,
 //   it should Not change the current selection though.
 // const sortedChats = [...chats].sort((a, b) => b.timestamp - a.timestamp);
@@ -65,7 +63,7 @@ export default function ChatList() {
                   {chat.displayName}
                 </div>
                 <div className="text-muted small text-nowrap">
-                  {chat.timestamp}
+                  {chat.displayTimestamp}
                 </div>
               </div>
               <div className="text-muted small">{chat.lastMessage}</div>

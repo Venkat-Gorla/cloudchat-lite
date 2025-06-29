@@ -6,7 +6,8 @@ export function fetchConversationsForDisplay(conversations, userId) {
       id: c.ConversationIndex,
       displayName: formatDisplayName(c.Participants, userId),
       lastMessage: c.LastMessage,
-      timestamp: formatTimestamp(c.LastTimestamp),
+      sortTimestamp: c.LastTimestamp,
+      displayTimestamp: formatTimestamp(c.LastTimestamp),
     }));
 }
 
