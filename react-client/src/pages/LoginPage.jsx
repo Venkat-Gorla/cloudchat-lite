@@ -12,9 +12,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
-      <h2 className="text-center mb-4">Welcome to CloudChat</h2>
-      <div className="card p-4 shadow-sm" style={{ minWidth: "350px" }}>
+    <div className="container py-5 d-flex flex-column align-items-center">
+      <h2 className="text-center mb-5">Welcome to CloudChat</h2>
+      <div
+        className="card p-4 shadow-sm"
+        style={{ width: "100%", minWidth: "320px", maxWidth: "380px" }}
+      >
         <h3 className="text-center mb-4">Login</h3>
         <form onSubmit={handleLogin}>
           <div className="mb-3">
