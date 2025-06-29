@@ -1,14 +1,30 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import useFormFields from "../hooks/useFormFields";
 
 export default function LoginPage() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  const { formData, isFormValid, handleFieldChange } = useFormFields([
+    "username",
+    "password",
+  ]);
+
   const handleLogin = (e) => {
     e.preventDefault();
     login();
     navigate("/chats");
+  };
+
+  const handleUsernameChange = (e) => {
+    const val = e.target.value;
+    handleFieldChange("username", val, !!val.trim());
+  };
+
+  const handlePasswordChange = (e) => {
+    const val = e.target.value;
+    handleFieldChange("password", val, !!val.trim());
   };
 
   return (
@@ -26,8 +42,10 @@ export default function LoginPage() {
             </label>
             <input
               type="text"
-              className="form-control"
               id="username"
+              className="form-control"
+              value={formData.username}
+              onChange={handleUsernameChange}
               required
             />
           </div>
@@ -37,12 +55,19 @@ export default function LoginPage() {
             </label>
             <input
               type="password"
-              className="form-control"
               id="password"
+              className="form-control"
+              value={formData.password}
+              onChange={handlePasswordChange}
+              autoComplete="current-password"
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={!isFormValid}
+          >
             Login
           </button>
         </form>
