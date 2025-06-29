@@ -1,21 +1,20 @@
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useFormFields from "../hooks/useFormFields";
+import { useSubmitHandler } from "../hooks/useSubmitHandler";
 
 export default function LoginPage() {
-  const { login, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const { formData, isFormValid, handleFieldChange } = useFormFields([
     "username",
     "password",
   ]);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    login();
-    navigate("/chats");
-  };
+  const { handleSubmit: handleLogin, isSubmitting } = useSubmitHandler({
+    isFormValid,
+    actionFn: login,
+    redirectTo: "/chats",
+  });
 
   const handleUsernameChange = (e) => {
     const val = e.target.value;
@@ -66,9 +65,9 @@ export default function LoginPage() {
           <button
             type="submit"
             className="btn btn-primary w-100"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isSubmitting}
           >
-            Login
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>
