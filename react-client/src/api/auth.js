@@ -33,8 +33,14 @@ function createErrorResponse(error) {
   let message = "Login failed";
 
   try {
-    const parsedError = JSON.parse(error?.response?.data);
-    message = parsedError?.error || message;
+    let data = error?.response?.data;
+
+    // Parse if data is still a stringified JSON
+    if (typeof data === "string") {
+      data = JSON.parse(data);
+    }
+
+    message = data?.error || error?.message || message;
   } catch {
     message = error?.message || message;
   }
