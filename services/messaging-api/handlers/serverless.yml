@@ -1,0 +1,27 @@
+# services/messaging-api/handlers/serverless.yml
+service: messaging-api-handlers
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+  environment:
+    COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
+    COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminInitiateAuth
+          Resource: "*"
+
+functions:
+  userLogin:
+    name: cloudchat-auth-login
+    handler: login.handler
+    events:
+      - http:
+          path: auth/login
+          method: post
+          cors: true
