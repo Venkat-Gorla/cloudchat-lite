@@ -7,13 +7,13 @@ const api = axios.create({
 });
 
 // Auth token injection
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("authToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// api.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("authToken");
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
 
 // Optional: global error logging/redirects
 // api.interceptors.response.use(
