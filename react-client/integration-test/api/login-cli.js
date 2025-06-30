@@ -13,8 +13,8 @@ if (!username || !password) {
   if (result.success) {
     console.log("Login successful");
     console.log("Access Token:", result.data.accessToken);
-    console.log("ID Token:", result.data.idToken);
-    console.log("Refresh Token:", result.data.refreshToken);
+    console.log("\nID Token:", result.data.idToken);
+    console.log("\nRefresh Token:", result.data.refreshToken);
   } else {
     console.error("Login failed:", result.error);
     process.exit(1);

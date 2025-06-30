@@ -1,4 +1,4 @@
-import api from "./client.js";
+import { callLambda } from "./client.js";
 import { ENDPOINTS } from "./endpoints.js";
 
 /**
@@ -9,45 +9,15 @@ import { ENDPOINTS } from "./endpoints.js";
  * @returns {Promise<{ success: boolean, data: object | null, error: string | null }>}
  */
 export async function loginUser(username, password) {
-  try {
-    const res = await api.post(ENDPOINTS.login, { username, password });
+  const result = await callLambda(ENDPOINTS.login, { username, password });
 
-    const parsed =
-      typeof res.data === "string" ? JSON.parse(res.data) : res.data;
+  if (!result.success) return result;
 
-    return {
-      success: true,
-      data: {
-        accessToken: parsed.accessToken,
-        idToken: parsed.idToken,
-        refreshToken: parsed.refreshToken,
-      },
-      error: null,
-    };
-  } catch (error) {
-    return createErrorResponse(error);
-  }
-}
-
-function createErrorResponse(error) {
-  let message = "Login failed";
-
-  try {
-    let data = error?.response?.data;
-
-    // Parse if data is still a stringified JSON
-    if (typeof data === "string") {
-      data = JSON.parse(data);
-    }
-
-    message = data?.error || error?.message || message;
-  } catch {
-    message = error?.message || message;
-  }
+  const { accessToken, idToken, refreshToken } = result.data;
 
   return {
-    success: false,
-    data: null,
-    error: message,
+    success: true,
+    data: { accessToken, idToken, refreshToken },
+    error: null,
   };
 }
