@@ -15,21 +15,9 @@ const api = axios.create({
 //   return config;
 // });
 
-// Optional: global error logging/redirects
-// api.interceptors.response.use(
-//   (res) => res,
-//   (err) => {
-//     if (err.response?.status === 401) {
-//       console.error("Unauthorized, redirect to login?");
-// Optional: window.location.href = '/login';
-//     }
-//     return Promise.reject(err);
-//   }
-// );
-
 export default api;
 
-export async function callLambda(endpoint, payload) {
+export async function callLambdaWithPost(endpoint, payload) {
   try {
     const res = await api.post(endpoint, payload);
 

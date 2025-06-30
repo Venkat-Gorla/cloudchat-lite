@@ -1,4 +1,4 @@
-import { callLambda } from "./client.js";
+import { callLambdaWithPost } from "./client.js";
 import { ENDPOINTS } from "./endpoints.js";
 
 /**
@@ -9,7 +9,10 @@ import { ENDPOINTS } from "./endpoints.js";
  * @returns {Promise<{ success: boolean, data: object | null, error: string | null }>}
  */
 export async function loginUser(username, password) {
-  const result = await callLambda(ENDPOINTS.login, { username, password });
+  const result = await callLambdaWithPost(ENDPOINTS.login, {
+    username,
+    password,
+  });
 
   if (!result.success) return result;
 
