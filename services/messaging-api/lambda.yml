@@ -1,4 +1,3 @@
-# services/messaging-api/handlers/serverless.yml
 service: messaging-api-handlers
 
 provider:
@@ -14,19 +13,20 @@ provider:
         - Effect: Allow
           Action:
             - cognito-idp:AdminInitiateAuth
-          Resource: "*"
+          Resource: "cloudchat-users"
+# TODO: Lambda role should have a user defined name, resource must be specific cognito
+# - what about cloud watch write permissions?
 
 package:
-  individually: true
   include:
-    - login.js
-    - ../utils/auth-lib.js
-    - ../constants.js
+    - handlers/login.js
+    - utils/auth-lib.js
+    - constants.js
 
 functions:
   userLogin:
     name: cloudchat-auth-login
-    handler: login.handler
+    handler: handlers/login.handler
     events:
       - http:
           path: auth/login
