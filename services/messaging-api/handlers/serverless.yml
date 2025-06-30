@@ -16,6 +16,13 @@ provider:
             - cognito-idp:AdminInitiateAuth
           Resource: "*"
 
+package:
+  individually: true
+  include:
+    - login.js
+    - ../utils/auth-lib.js
+    - ../constants.js
+
 functions:
   userLogin:
     name: cloudchat-auth-login
