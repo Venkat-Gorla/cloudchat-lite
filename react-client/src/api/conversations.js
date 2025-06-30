@@ -1,3 +1,4 @@
+import api from "./client";
 import { fetchMockConversationsForUser } from "./mock-conversations.js";
 
 export async function fetchConversationsForUser(userId, delayMs = 500) {
@@ -9,4 +10,10 @@ export async function fetchConversationsForUser(userId, delayMs = 500) {
   // return Promise.reject(new Error("Simulated network failure"));
 
   return fetchMockConversationsForUser(userId);
+}
+
+const LAMBDA_CONVERSATION_URL = "https://your-lambda-url.aws-region.on.aws/";
+
+function getConversationsForUser(userId) {
+  return api.post(LAMBDA_CONVERSATION_URL, { userId });
 }
