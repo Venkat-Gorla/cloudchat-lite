@@ -9,19 +9,27 @@ provider:
     COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
   iam:
     role:
+      name: cloudchat-login-lambda-role
       statements:
         - Effect: Allow
           Action:
             - cognito-idp:AdminInitiateAuth
-          Resource: "cloudchat-users"
-# TODO: Lambda role should have a user defined name, resource must be specific cognito
-# - what about cloud watch write permissions?
+          Resource:
+            - arn:aws:cognito-idp:ap-south-1:${aws:accountId}:userpool/${env:COGNITO_USER_POOL_ID}
 
 package:
   include:
     - handlers/login.js
     - utils/auth-lib.js
     - constants.js
+  exclude:
+    - package-lock.json
+    - integration-test/**
+    - .git/**
+    - .vscode/**
+    - README.md
+    - "**/*.test.js"
+    - "**/__tests__/**"
 
 functions:
   userLogin:
