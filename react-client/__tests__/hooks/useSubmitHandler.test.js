@@ -34,8 +34,29 @@ describe("useSubmitHandler", () => {
   });
 
   it("calls actionFn and navigates when form is valid", async () => {
-    mockAction.mockResolvedValue();
+    mockAction.mockResolvedValue({ success: true });
 
+    const result = await callSubmitHook();
+
+    expect(mockAction).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith("/home");
+    expect(result.current.errorMessage).toBe("");
+    expect(result.current.isSubmitting).toBe(false);
+  });
+
+  it("sets error message when actionFn returns an error", async () => {
+    mockAction.mockResolvedValue({ success: false, error: "Invalid input" });
+
+    const result = await callSubmitHook();
+
+    expect(mockAction).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(result.current.errorMessage).toBe("Invalid input");
+    expect(result.current.isSubmitting).toBe(false);
+  });
+
+  // validate actionFn behavior for success/error
+  async function callSubmitHook() {
     const { result } = renderHook(() =>
       useSubmitHandler({
         isFormValid: true,
@@ -48,10 +69,8 @@ describe("useSubmitHandler", () => {
       await result.current.handleSubmit(fakeEvent);
     });
 
-    expect(mockAction).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("/home");
-    expect(result.current.isSubmitting).toBe(false);
-  });
+    return result;
+  }
 
   it("handles errors in actionFn gracefully", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});

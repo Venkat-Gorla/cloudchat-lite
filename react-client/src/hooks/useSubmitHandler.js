@@ -15,12 +15,12 @@ export function useSubmitHandler({ isFormValid, actionFn, redirectTo }) {
       setErrorMessage("");
 
       try {
-        // TODO: actionFn should check for failure and the error message
-        // can be exposed as state that can be used inside the calling component.
-        // Navigate should only happen on success.
-        setErrorMessage("Invalid username or password");
-        await actionFn(formData);
-        navigate(redirectTo);
+        const result = await actionFn(formData);
+        if (result.success) {
+          navigate(redirectTo);
+        } else {
+          setErrorMessage(result.error || "Invalid username or password");
+        }
       } catch (error) {
         console.error(error);
       } finally {
