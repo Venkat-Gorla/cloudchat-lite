@@ -50,16 +50,12 @@ export async function verifyToken(token) {
   const keyId = decodedTokenHeader.header.kid;
   const signingKey = await createSigningKey(keyId);
 
-  try {
-    const payload = jwt.verify(token, signingKey, {
-      issuer: ISSUER,
-      algorithms: ["RS256"],
-    });
+  const payload = jwt.verify(token, signingKey, {
+    issuer: ISSUER,
+    algorithms: ["RS256"],
+  });
 
-    return payload;
-  } catch (err) {
-    throw new Error(`Token verification failed: ${err.message}`);
-  }
+  return payload;
 }
 
 function createSigningKey(keyId) {
