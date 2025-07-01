@@ -1,4 +1,5 @@
 import { handler } from "../../handlers/login.js";
+import { verifyToken } from "../../utils/auth-lib.js";
 
 const [username, password] = process.argv.slice(2);
 
@@ -11,4 +12,22 @@ const event = {
   body: JSON.stringify({ username, password }),
 };
 
-handler(event).then(console.log).catch(console.error);
+(async () => {
+  try {
+    const result = await handler(event);
+    const body = JSON.parse(result.body);
+
+    if (result.statusCode === 200) {
+      console.log("Login successful");
+      console.log("ID Token:", body.idToken);
+
+      const payload = await verifyToken(body.idToken);
+      console.log("\nDecoded ID Token Payload:", payload);
+    } else {
+      console.error("Login failed:", body.error);
+    }
+  } catch (err) {
+    console.error("Test execution failed:", err);
+    process.exit(1);
+  }
+})();

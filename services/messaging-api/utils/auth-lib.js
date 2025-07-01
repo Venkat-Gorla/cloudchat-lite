@@ -1,6 +1,6 @@
 import { AdminInitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
+import jwksClient from "jwks-rsa";
 import jwt from "jsonwebtoken";
-import jwksRsa from "jwks-rsa";
 import { AWS_REGION } from "../constants.js";
 
 export function createAuthCommand(event) {
@@ -36,32 +36,40 @@ export function createAuthCommand(event) {
 const USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
 const ISSUER = `https://cognito-idp.${AWS_REGION}.amazonaws.com/${USER_POOL_ID}`;
 
-const client = jwksRsa.createRemoteJWKSet(
-  new URL(`${ISSUER}/.well-known/jwks.json`)
-);
+const JWKS = jwksClient({
+  jwksUri: `${ISSUER}/.well-known/jwks.json`,
+  cache: true, // Optional, enables caching of JWKs
+});
 
 export async function verifyToken(token) {
-  const { header } = jwt.decode(token, { complete: true }) || {};
-  if (!header?.kid) {
-    throw new Error("Token header missing `kid`");
+  const decodedTokenHeader = jwt.decode(token, { complete: true });
+  if (!decodedTokenHeader || !decodedTokenHeader.header?.kid) {
+    throw new Error("Invalid or malformed token");
   }
 
-  const key = await client({ kid: header.kid });
+  const keyId = decodedTokenHeader.header.kid;
+  const signingKey = await createSigningKey(keyId);
 
+  try {
+    const payload = jwt.verify(token, signingKey, {
+      issuer: ISSUER,
+      algorithms: ["RS256"],
+    });
+
+    return payload;
+  } catch (err) {
+    throw new Error(`Token verification failed: ${err.message}`);
+  }
+}
+
+function createSigningKey(keyId) {
   return new Promise((resolve, reject) => {
-    jwt.verify(
-      token,
-      key,
-      {
-        issuer: ISSUER,
-        algorithms: ["RS256"],
-      },
-      (err, decoded) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(decoded);
+    JWKS.getSigningKey(keyId, (err, key) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(key.getPublicKey());
       }
-    );
+    });
   });
 }
