@@ -19,10 +19,7 @@ const event = {
 
     if (result.statusCode === 200) {
       console.log("Login successful");
-      console.log("ID Token:", body.idToken);
-
-      const payload = await verifyToken(body.idToken);
-      console.log("\nDecoded ID Token Payload:", payload);
+      await printTokens(body);
     } else {
       console.error("Login failed:", body.error);
     }
@@ -31,3 +28,13 @@ const event = {
     process.exit(1);
   }
 })();
+
+async function printTokens(body) {
+  const idPayload = await verifyToken(body.idToken);
+  console.log("\nDecoded idToken:", idPayload);
+
+  const accessPayload = await verifyToken(body.accessToken);
+  console.log("\nDecoded accessToken:", accessPayload);
+
+  // note: refresh token is opaque and cannot be verified or decoded
+}
