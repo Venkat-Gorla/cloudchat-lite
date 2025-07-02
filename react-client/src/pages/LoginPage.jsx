@@ -44,7 +44,7 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={(e) => handleLogin(e, formData)}>
+        <form onSubmit={(e) => handleLogin(e, formData)} autoComplete="off">
           <div className="mb-3">
             <label htmlFor="username" className="form-label">
               Username
@@ -59,16 +59,17 @@ export default function LoginPage() {
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="password" className="form-label">
+            <label htmlFor="login-pass" className="form-label">
               Password
             </label>
             <input
               type="password"
-              id="password"
+              id="login-pass"
+              name="login-pass"
               className="form-control"
               value={formData.password}
               onChange={handlePasswordChange}
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
             />
           </div>
