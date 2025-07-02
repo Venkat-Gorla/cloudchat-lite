@@ -5,9 +5,11 @@
 // Consider collapsing loading/error/empty states into a common <ChatListState /> component
 // Store activeChatId instead of index to preserve selection on reordering
 
+import { useState } from "react";
 import useUserConversations from "../hooks/useUserConversations";
 
-export default function ChatsList({ activeIndex, setActiveIndex }) {
+export default function ChatsList() {
+  const [activeIndex, setActiveIndex] = useState(0);
   const {
     data: chats = [],
     isLoading,
