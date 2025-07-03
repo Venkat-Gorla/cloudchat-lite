@@ -69,3 +69,64 @@ function createSigningKey(keyId) {
     });
   });
 }
+
+// token validation function:
+// - It's signature verified using JWKS
+// - Reject anything that's not a JWT upfront:
+// - audience, issuer, and exp are validated
+// - Only access tokens are accepted for this endpoint (not id tokens)
+// - custom role hand-created by admin
+
+/**
+ * Validates the access token and extracts structured info
+ * @param {string} token - JWT access token
+ * @returns {Promise<{ success: boolean, data: object | null, error: string | null }>}
+ */
+export async function validateAccessToken(token) {
+  if (!token || typeof token !== "string" || token.split(".").length !== 3) {
+    return {
+      success: false,
+      data: null,
+      error: "Invalid token format",
+    };
+  }
+
+  try {
+    const payload = await verifyToken(token);
+
+    if (!payload || !payload.scope?.includes("aws.cognito.signin.user.admin")) {
+      return {
+        success: false,
+        data: null,
+        error: "Invalid or unauthorized token",
+      };
+    }
+
+    if (payload["custom:role"] !== "admin") {
+      return {
+        success: false,
+        data: null,
+        error: "Access restricted to custom users",
+      };
+    }
+
+    const username = payload["cognito:username"] || payload.username;
+
+    return {
+      success: true,
+      data: {
+        username,
+        sub: payload.sub,
+        scope: payload.scope,
+        role: payload["custom:role"],
+      },
+      error: null,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      data: null,
+      error: `Token verification failed: ${err.message}`,
+    };
+  }
+}
