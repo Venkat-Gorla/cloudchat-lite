@@ -14,14 +14,10 @@ export default api;
 // POST: optional access token to be added manually if needed
 export async function callLambdaWithPost(endpoint, payload, accessToken) {
   try {
-    const headers = accessToken
-      ? { Authorization: `Bearer ${accessToken}` }
-      : {};
-
+    const headers = createHeaders(accessToken);
     const res = await api.post(endpoint, payload, { headers });
 
-    const parsed =
-      typeof res.data === "string" ? JSON.parse(res.data) : res.data;
+    const parsed = parseSafeJSON(res.data);
 
     return {
       success: true,
@@ -36,17 +32,13 @@ export async function callLambdaWithPost(endpoint, payload, accessToken) {
 // GET variant for Lambda calls
 export async function callLambdaWithGet(endpoint, params = {}, accessToken) {
   try {
-    const headers = accessToken
-      ? { Authorization: `Bearer ${accessToken}` }
-      : {};
-
+    const headers = createHeaders(accessToken);
     const res = await api.get(endpoint, {
       params,
       headers,
     });
 
-    const parsed =
-      typeof res.data === "string" ? JSON.parse(res.data) : res.data;
+    const parsed = parseSafeJSON(res.data);
 
     return {
       success: true,
@@ -77,4 +69,12 @@ export function createErrorResponse(error, fallback = "Request failed") {
     data: null,
     error: message,
   };
+}
+
+function createHeaders(accessToken) {
+  return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+}
+
+function parseSafeJSON(input) {
+  return typeof input === "string" ? JSON.parse(input) : input;
 }
