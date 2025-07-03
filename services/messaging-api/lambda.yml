@@ -48,7 +48,7 @@ resources:
   Resources:
     UserLoginLambdaRole:
       Type: AWS::IAM::Role
-      Properties:
+      Properties: &LambdaRoleDefaults
         RoleName: cloudchat-user-login-role
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
@@ -73,16 +73,8 @@ resources:
     ListUsersLambdaRole:
       Type: AWS::IAM::Role
       Properties:
+        <<: *LambdaRoleDefaults
         RoleName: cloudchat-list-users-role
-        AssumeRolePolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Principal:
-                Service: lambda.amazonaws.com
-              Action: sts:AssumeRole
-        ManagedPolicyArns:
-          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         Policies:
           - PolicyName: ListUsersPolicy
             PolicyDocument:
