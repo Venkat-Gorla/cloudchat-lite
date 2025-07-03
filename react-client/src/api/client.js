@@ -6,20 +6,19 @@ const api = axios.create({
   },
 });
 
-// Auth token injection
-// api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem("authToken");
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+// Optional: access token via localStorage (disabled for security reasons)
+// api.interceptors.request.use(...);
 
 export default api;
 
-export async function callLambdaWithPost(endpoint, payload) {
+// POST: optional access token to be added manually if needed
+export async function callLambdaWithPost(endpoint, payload, accessToken) {
   try {
-    const res = await api.post(endpoint, payload);
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
+
+    const res = await api.post(endpoint, payload, { headers });
 
     const parsed =
       typeof res.data === "string" ? JSON.parse(res.data) : res.data;
@@ -34,6 +33,32 @@ export async function callLambdaWithPost(endpoint, payload) {
   }
 }
 
+// GET variant for Lambda calls
+export async function callLambdaWithGet(endpoint, params = {}, accessToken) {
+  try {
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
+
+    const res = await api.get(endpoint, {
+      params,
+      headers,
+    });
+
+    const parsed =
+      typeof res.data === "string" ? JSON.parse(res.data) : res.data;
+
+    return {
+      success: true,
+      data: parsed,
+      error: null,
+    };
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+// Consistent error formatting
 export function createErrorResponse(error, fallback = "Request failed") {
   let message = fallback;
 
