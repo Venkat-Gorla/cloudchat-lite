@@ -3,25 +3,16 @@ import {
   ListUsersCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { AWS_REGION, CORS_HEADERS } from "../constants.js";
+import { validateAccessToken } from "../utils/auth-lib.js";
 
 const client = new CognitoIdentityProviderClient({ region: AWS_REGION });
 
+// TODO consider rate limiting for Lambda
 export const handler = async (event) => {
-  const token = extractAccessToken(event.headers);
-  if (!token) {
-    return {
-      statusCode: 401,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({
-        error: "Missing or invalid Authorization header",
-      }),
-    };
-  }
+  const authResult = await authenticateRequest(event.headers);
+  if (authResult) return authResult;
 
   try {
-    // Skip validation for resume/demo (Cognito verifies token for us)
-    // vegorla: consider full validation of token since this will be open source,
-    // also consider rate limiting for Lambda etc.
     const command = new ListUsersCommand({
       UserPoolId: process.env.COGNITO_USER_POOL_ID,
       Limit: 20, // hardcoded max
@@ -44,6 +35,33 @@ export const handler = async (event) => {
     };
   }
 };
+
+// TODO: the contract of this function should be modified for generic Lambda
+// integration; it should return extracted token data: username etc.
+// suggestion: { success, tokenData, errorHttpResponse }
+async function authenticateRequest(headers = {}) {
+  const token = extractAccessToken(headers);
+  if (!token) {
+    return {
+      statusCode: 401,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({
+        error: "Missing or invalid Authorization header",
+      }),
+    };
+  }
+
+  const { success, data, error } = await validateAccessToken(token);
+  if (!success) {
+    return {
+      statusCode: 403,
+      headers: CORS_HEADERS,
+      body: JSON.stringify({ error }),
+    };
+  }
+
+  return null; // authenticated successfully, continue
+}
 
 function extractAccessToken(headers = {}) {
   const auth = headers.Authorization || headers.authorization;
