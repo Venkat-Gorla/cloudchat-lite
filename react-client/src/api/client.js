@@ -9,15 +9,19 @@ const api = axios.create({
 // Optional: access token via localStorage (disabled for security reasons)
 // api.interceptors.request.use(...);
 
-export default api;
-
-// POST: optional access token to be added manually if needed
-export async function callLambdaWithPost(endpoint, payload, accessToken) {
+// Main unified Lambda caller
+async function callLambda(method, endpoint, options = {}, accessToken) {
   try {
     const headers = createHeaders(accessToken);
-    const res = await api.post(endpoint, payload, { headers });
 
-    const parsed = parseSafeJSON(res.data);
+    const response = await api.request({
+      method,
+      url: endpoint,
+      headers,
+      ...options,
+    });
+
+    const parsed = parseSafeJSON(response.data);
 
     return {
       success: true,
@@ -29,24 +33,24 @@ export async function callLambdaWithPost(endpoint, payload, accessToken) {
   }
 }
 
-// GET variant for Lambda calls
-export async function callLambdaWithGet(endpoint, params = {}, accessToken) {
+export const callLambdaWithPost = (endpoint, payload, accessToken) =>
+  callLambda("post", endpoint, { data: payload }, accessToken);
+
+export const callLambdaWithGet = (endpoint, queryParams = {}, accessToken) =>
+  callLambda("get", endpoint, { params: queryParams }, accessToken);
+
+// Utility: builds Authorization headers
+function createHeaders(accessToken) {
+  return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+}
+
+// Utility: safe JSON parsing
+function parseSafeJSON(input) {
+  if (typeof input !== "string") return input;
   try {
-    const headers = createHeaders(accessToken);
-    const res = await api.get(endpoint, {
-      params,
-      headers,
-    });
-
-    const parsed = parseSafeJSON(res.data);
-
-    return {
-      success: true,
-      data: parsed,
-      error: null,
-    };
-  } catch (error) {
-    return createErrorResponse(error);
+    return JSON.parse(input);
+  } catch {
+    return input;
   }
 }
 
@@ -71,10 +75,4 @@ export function createErrorResponse(error, fallback = "Request failed") {
   };
 }
 
-function createHeaders(accessToken) {
-  return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
-}
-
-function parseSafeJSON(input) {
-  return typeof input === "string" ? JSON.parse(input) : input;
-}
+export default api;
