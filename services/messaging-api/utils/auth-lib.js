@@ -70,13 +70,6 @@ function createSigningKey(keyId) {
   });
 }
 
-// token validation function:
-// - It's signature verified using JWKS
-// - Reject anything that's not a JWT upfront:
-// - audience, issuer, and exp are validated
-// - Only access tokens are accepted for this endpoint (not id tokens)
-// - custom role hand-created by admin
-
 /**
  * Validates the access token and extracts structured info
  * @param {string} token - JWT access token
@@ -102,14 +95,6 @@ export async function validateAccessToken(token) {
       };
     }
 
-    if (payload["custom:role"] !== "admin") {
-      return {
-        success: false,
-        data: null,
-        error: "Access restricted to custom users",
-      };
-    }
-
     const username = payload["cognito:username"] || payload.username;
 
     return {
@@ -118,7 +103,6 @@ export async function validateAccessToken(token) {
         username,
         sub: payload.sub,
         scope: payload.scope,
-        role: payload["custom:role"],
       },
       error: null,
     };

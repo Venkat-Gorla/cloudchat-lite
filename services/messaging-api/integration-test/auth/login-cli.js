@@ -1,5 +1,5 @@
 import { handler } from "../../handlers/login.js";
-import { verifyToken } from "../../utils/auth-lib.js";
+import { verifyToken, validateAccessToken } from "../../utils/auth-lib.js";
 
 const [username, password] = process.argv.slice(2);
 
@@ -19,7 +19,7 @@ const event = {
 
     if (result.statusCode === 200) {
       console.log("Login successful");
-      await printTokens(body);
+      await validateTokens(body);
     } else {
       console.error("Login failed:", body.error);
     }
@@ -29,12 +29,15 @@ const event = {
   }
 })();
 
-async function printTokens(body) {
+async function validateTokens(body) {
+  // note: refresh token is opaque and cannot be verified or decoded
+
   const idPayload = await verifyToken(body.idToken);
   console.log("\nDecoded idToken:", idPayload);
 
   const accessPayload = await verifyToken(body.accessToken);
   console.log("\nDecoded accessToken:", accessPayload);
 
-  // note: refresh token is opaque and cannot be verified or decoded
+  const result = await validateAccessToken(body.accessToken);
+  console.log("\nAccess token validation result:", result);
 }
