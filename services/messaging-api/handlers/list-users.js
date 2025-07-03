@@ -9,8 +9,10 @@ const client = new CognitoIdentityProviderClient({ region: AWS_REGION });
 
 // TODO consider rate limiting for Lambda
 export const handler = async (event) => {
-  const authResult = await authenticateRequest(event.headers);
-  if (authResult) return authResult;
+  const { success, tokenData, errorHttpResponse } = await authenticateRequest(
+    event.headers
+  );
+  if (!success) return errorHttpResponse;
 
   try {
     const command = new ListUsersCommand({
@@ -36,31 +38,37 @@ export const handler = async (event) => {
   }
 };
 
-// TODO: the contract of this function should be modified for generic Lambda
-// integration; it should return extracted token data: username etc.
-// suggestion: { success, tokenData, errorHttpResponse }
 async function authenticateRequest(headers = {}) {
   const token = extractAccessToken(headers);
   if (!token) {
     return {
-      statusCode: 401,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({
-        error: "Missing or invalid Authorization header",
-      }),
+      success: false,
+      errorHttpResponse: {
+        statusCode: 401,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({
+          error: "Missing or invalid Authorization header",
+        }),
+      },
     };
   }
 
   const { success, data, error } = await validateAccessToken(token);
   if (!success) {
     return {
-      statusCode: 403,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({ error }),
+      success: false,
+      errorHttpResponse: {
+        statusCode: 403,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({ error }),
+      },
     };
   }
 
-  return null; // authenticated successfully, continue
+  return {
+    success: true,
+    tokenData: data,
+  }; // authenticated successfully, continue
 }
 
 function extractAccessToken(headers = {}) {
