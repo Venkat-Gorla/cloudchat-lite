@@ -26,6 +26,12 @@ export function usePhonebook() {
     }
 
     const accessToken = getAccessToken();
+    if (!accessToken) {
+      setError("Missing access token");
+      setIsLoading(false);
+      return;
+    }
+
     getUserDirectory(accessToken).then((result) => {
       if (result.success) {
         phonebookRef.current = result.data;
@@ -33,7 +39,7 @@ export function usePhonebook() {
         setData(result.data);
         setError(null);
       } else {
-        setError(result.error || "Unknown error");
+        setError(result.error || "Failed to fetch users");
         setData(null);
       }
       setIsLoading(false);
