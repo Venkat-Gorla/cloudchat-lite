@@ -6,12 +6,23 @@ import { getUserDirectory } from "../api/users.js";
 const PhonebookContext = createContext();
 
 export function PhonebookProvider({ children }) {
-  const { getAccessToken } = useAuth();
+  const { getAccessToken, isAuthenticated } = useAuth();
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const resetPhonebook = () => {
+    setData(null);
+    setError(null);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
+    if (!isAuthenticated) {
+      resetPhonebook(); // clear phonebook on logout
+      return;
+    }
+
     const accessToken = getAccessToken();
     if (!accessToken) {
       setError("Missing access token");
@@ -29,7 +40,7 @@ export function PhonebookProvider({ children }) {
       }
       setIsLoading(false);
     });
-  }, [getAccessToken]);
+  }, [getAccessToken, isAuthenticated]);
 
   return (
     <PhonebookContext.Provider value={{ data, error, isLoading }}>
