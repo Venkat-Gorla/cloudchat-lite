@@ -1,29 +1,44 @@
 // src/hooks/usePhonebook.js
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
-import { getUserDirectory } from "../api/auth";
-
-// memory-only cache for the session
-let phonebook = null;
-let fetched = false;
+import { getUserDirectory } from "../api/users.js";
 
 /**
- * Hook to retrieve and cache phonebook once per session.
+ * Hook to fetch and cache phonebook once per session.
  * Assumes accessToken is always available via AuthContext.
  *
- * @returns {Promise<object[]>} list of users
+ * @returns {{ data: object[] | null, error: string | null, isLoading: boolean }}
  */
-export async function usePhonebook() {
-  if (fetched) return phonebook;
-
+export function usePhonebook() {
   const { getAccessToken } = useAuth();
-  const accessToken = getAccessToken(); // assumed always available
+  const phonebookRef = useRef(null);
+  const fetchedRef = useRef(false);
 
-  const result = await getUserDirectory(accessToken);
-  if (result.success) {
-    phonebook = result.data;
-    fetched = true;
-    return phonebook;
-  }
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(!fetchedRef.current);
 
-  throw new Error("Failed to fetch phonebook: " + result.error);
+  useEffect(() => {
+    if (fetchedRef.current) {
+      setData(phonebookRef.current);
+      setIsLoading(false);
+      return;
+    }
+
+    const accessToken = getAccessToken();
+    getUserDirectory(accessToken).then((result) => {
+      if (result.success) {
+        phonebookRef.current = result.data;
+        fetchedRef.current = true;
+        setData(result.data);
+        setError(null);
+      } else {
+        setError(result.error || "Unknown error");
+        setData(null);
+      }
+      setIsLoading(false);
+    });
+  }, [getAccessToken]);
+
+  return { data, error, isLoading };
 }
