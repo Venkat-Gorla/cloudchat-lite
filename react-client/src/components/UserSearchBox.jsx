@@ -9,14 +9,13 @@ export default function UserSearchBox() {
   const [selectedUser, setSelectedUser] = useState(null);
   const inputRef = useRef(null);
 
-  // TODO: - username should be part of search and active user logic
-
   // Memoize filtered list based on search input
   const filteredUsers = useMemo(() => {
     if (!phonebookUsers) return [];
-    const names = phonebookUsers.map((user) => user.name);
-    return names.filter((name) =>
-      name.toLowerCase().includes(search.toLowerCase())
+    return phonebookUsers.filter(
+      (user) =>
+        user.name.toLowerCase().includes(search.toLowerCase()) ||
+        user.username.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, phonebookUsers]);
 
@@ -55,7 +54,7 @@ export default function UserSearchBox() {
           selectedUser={selectedUser}
           onSelect={(user) => {
             setSelectedUser(user);
-            setSearch(user);
+            setSearch(user.name);
             setShowDropdown(false);
           }}
         />

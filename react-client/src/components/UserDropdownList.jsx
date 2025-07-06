@@ -7,14 +7,15 @@ export default function UserDropdownList({ users, selectedUser, onSelect }) {
       {users.length > 0 ? (
         users.map((user) => (
           <li
-            key={user}
+            key={user.username} // unique key
             className={`list-group-item list-group-item-action ${
-              selectedUser === user ? "active" : ""
+              selectedUser?.username === user.username ? "active" : ""
             }`}
             onClick={() => onSelect(user)}
             style={{ cursor: "pointer" }}
           >
-            {user}
+            <div>{user.name}</div>
+            <div className="text-muted small">{user.username}</div>
           </li>
         ))
       ) : (
