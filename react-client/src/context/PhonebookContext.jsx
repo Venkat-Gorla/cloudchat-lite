@@ -9,7 +9,7 @@ export function PhonebookProvider({ children }) {
   const { getAccessToken, isAuthenticated } = useAuth();
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const resetPhonebook = () => {
     setData(null);
@@ -26,10 +26,10 @@ export function PhonebookProvider({ children }) {
     const accessToken = getAccessToken();
     if (!accessToken) {
       setError("Missing access token");
-      setIsLoading(false);
       return;
     }
 
+    setIsLoading(true);
     getUserDirectory(accessToken).then((result) => {
       if (result.success) {
         setData(result.data);
