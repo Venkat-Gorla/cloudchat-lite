@@ -37,7 +37,7 @@ export default function UserSearchBox() {
     : "Search or start a new chat";
 
   return (
-    <div ref={inputRef}>
+    <div ref={inputRef} data-testid="user-search-box">
       <input
         type="text"
         placeholder={placeholderText}
@@ -46,6 +46,7 @@ export default function UserSearchBox() {
         onChange={(e) => setSearch(e.target.value)}
         onFocus={() => setShowDropdown(true)}
         disabled={isLoading || !!error}
+        data-testid="user-search-input"
       />
 
       {showDropdown && (
