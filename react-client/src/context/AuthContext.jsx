@@ -1,5 +1,3 @@
-// vegorla: hook for token management: login, store, refresh?
-
 import { createContext, useContext, useState, useRef } from "react";
 import { loginUser } from "../api/auth.js";
 
@@ -25,12 +23,9 @@ export function AuthProvider({ children }) {
 
   const getAccessToken = () => accessTokenRef.current;
 
+  const contextValue = { isAuthenticated, login, logout, getAccessToken };
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, getAccessToken }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 

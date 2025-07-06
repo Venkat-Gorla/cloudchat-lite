@@ -1,4 +1,3 @@
-// src/context/PhonebookContext.js
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import { getUserDirectory } from "../api/users.js";
@@ -42,8 +41,9 @@ export function PhonebookProvider({ children }) {
     });
   }, [getAccessToken, isAuthenticated]);
 
+  const contextValue = { data, error, isLoading };
   return (
-    <PhonebookContext.Provider value={{ data, error, isLoading }}>
+    <PhonebookContext.Provider value={contextValue}>
       {children}
     </PhonebookContext.Provider>
   );
