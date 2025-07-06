@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { usePhonebook } from "../context/PhonebookContext";
+import UserDropdownList from "./UserDropdownList";
 
 export default function UserSearchBox() {
   const { data: phonebookUsers, isLoading, error } = usePhonebook();
@@ -51,31 +52,15 @@ export default function UserSearchBox() {
       />
 
       {showDropdown && (
-        <ul
-          className="list-group position-absolute w-100 shadow-sm mt-1"
-          style={{ zIndex: 10 }}
-        >
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <li
-                key={user}
-                className={`list-group-item list-group-item-action ${
-                  selectedUser === user ? "active" : ""
-                }`}
-                onClick={() => {
-                  setSelectedUser(user);
-                  setSearch(user);
-                  setShowDropdown(false);
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                {user}
-              </li>
-            ))
-          ) : (
-            <li className="list-group-item text-muted">No users found</li>
-          )}
-        </ul>
+        <UserDropdownList
+          users={filteredUsers}
+          selectedUser={selectedUser}
+          onSelect={(user) => {
+            setSelectedUser(user);
+            setSearch(user);
+            setShowDropdown(false);
+          }}
+        />
       )}
     </div>
   );
