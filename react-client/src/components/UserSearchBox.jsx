@@ -1,24 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { usePhonebook } from "../context/PhonebookContext";
 import UserDropdownList from "./UserDropdownList";
 
 export default function UserSearchBox() {
   const { data: phonebookUsers, isLoading, error } = usePhonebook();
   const [search, setSearch] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const inputRef = useRef(null);
 
-  // TODO: - modularize this component, useMemo for performance
-  // - username should be part of search and active user logic
+  // TODO: - username should be part of search and active user logic
 
-  // Update filtered list based on search input
-  useEffect(() => {
-    if (!phonebookUsers) return;
+  // Memoize filtered list based on search input
+  const filteredUsers = useMemo(() => {
+    if (!phonebookUsers) return [];
     const names = phonebookUsers.map((user) => user.name);
-    setFilteredUsers(
-      names.filter((name) => name.toLowerCase().includes(search.toLowerCase()))
+    return names.filter((name) =>
+      name.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, phonebookUsers]);
 
