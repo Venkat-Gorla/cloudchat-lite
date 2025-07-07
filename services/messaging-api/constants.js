@@ -1,7 +1,6 @@
-// vegorla: move to env constants
 export const AWS_REGION = "ap-south-1";
-export const MESSAGES_TABLE_NAME = "cloudchat-messages";
-export const MESSAGES_GSI_NAME = "UserConversationsIndex";
+export const MESSAGES_TABLE_NAME = process.env.MESSAGES_TABLE_NAME;
+export const MESSAGES_GSI_NAME = process.env.MESSAGES_GSI_NAME;
 
 export const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
