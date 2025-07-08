@@ -3,7 +3,7 @@ import {
   ListUsersCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { AWS_REGION, CORS_HEADERS } from "../constants.js";
-import { validateAccessToken } from "../utils/auth-lib.js";
+import { authenticateRequest } from "../utils/auth-lib.js";
 
 const client = new CognitoIdentityProviderClient({ region: AWS_REGION });
 
@@ -37,45 +37,6 @@ export const handler = async (event) => {
     };
   }
 };
-
-async function authenticateRequest(headers = {}) {
-  const token = extractAccessToken(headers);
-  if (!token) {
-    return {
-      success: false,
-      errorHttpResponse: {
-        statusCode: 401,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({
-          error: "Missing or invalid Authorization header",
-        }),
-      },
-    };
-  }
-
-  const { success, data, error } = await validateAccessToken(token);
-  if (!success) {
-    return {
-      success: false,
-      errorHttpResponse: {
-        statusCode: 403,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({ error }),
-      },
-    };
-  }
-
-  return {
-    success: true,
-    tokenData: data,
-  }; // authenticated successfully, continue
-}
-
-function extractAccessToken(headers = {}) {
-  const auth = headers.Authorization || headers.authorization;
-  if (!auth || !auth.startsWith("Bearer ")) return null;
-  return auth.replace("Bearer ", "").trim();
-}
 
 function extractResults(Users) {
   return Users.map((user) => {
