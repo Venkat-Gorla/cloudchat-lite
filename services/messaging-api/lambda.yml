@@ -7,11 +7,14 @@ provider:
   environment:
     COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
     COGNITO_USER_POOL_ID: ${env:COGNITO_USER_POOL_ID}
+    MESSAGES_TABLE_NAME: ${env:MESSAGES_TABLE_NAME}
+    MESSAGES_GSI_NAME: ${env:MESSAGES_GSI_NAME}
 
 package:
   include:
     - handlers/login.js
     - handlers/list-users.js
+    - handlers/get-conversations.js
     - utils/auth-lib.js
     - constants.js
   exclude:
@@ -43,6 +46,16 @@ functions:
           method: get
           cors: true
     role: ListUsersLambdaRole
+
+  getConversations:
+    name: cloudchat-get-conversations
+    handler: handlers/get-conversations.getConversationsForUser
+    events:
+      - http:
+          path: user/conversations
+          method: get
+          cors: true
+    role: GetConversationsLambdaRole
 
 resources:
   Resources:
@@ -85,3 +98,19 @@ resources:
                     - cognito-idp:ListUsers
                   Resource:
                     - arn:aws:cognito-idp:ap-south-1:${aws:accountId}:userpool/${env:COGNITO_USER_POOL_ID}
+
+    GetConversationsLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        <<: *LambdaRoleDefaults
+        RoleName: cloudchat-get-conversations-role
+        Policies:
+          - PolicyName: GetConversationsPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:Query
+                  Resource:
+                    - arn:aws:dynamodb:ap-south-1:${aws:accountId}:table/${env:MESSAGES_TABLE_NAME}/index/${env:MESSAGES_GSI_NAME}
