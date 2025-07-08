@@ -1,25 +1,9 @@
 import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import {
-  AWS_REGION,
-  MESSAGES_TABLE_NAME,
-  MESSAGES_GSI_NAME,
-} from "../constants.js";
+import { AWS_REGION, MESSAGES_TABLE_NAME } from "../constants.js";
+import { fetchConversationsForUser } from "../handlers/get-conversations.js";
 
 const ddb = new DynamoDBClient({ region: AWS_REGION });
-
-const fetchConversationsForUser = async (username) => {
-  const res = await ddb.send(
-    new QueryCommand({
-      TableName: MESSAGES_TABLE_NAME,
-      IndexName: MESSAGES_GSI_NAME,
-      KeyConditionExpression: "UserId = :u",
-      ExpressionAttributeValues: marshall({ ":u": `USER#${username}` }),
-    })
-  );
-
-  return res.Items.map(unmarshall);
-};
 
 const fetchMessagesForConversation = async (conversationId) => {
   const res = await ddb.send(
@@ -44,7 +28,7 @@ const fetchMessagesForConversation = async (conversationId) => {
   }
 
   console.log(`\nFetching conversations for user: ${username}\n`);
-  const convos = await fetchConversationsForUser(username);
+  const convos = await fetchConversationsForUser(ddb, username);
   if (convos.length === 0) {
     console.log(`No conversations found for user ${username}.`);
     return;
