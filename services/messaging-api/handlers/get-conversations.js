@@ -1,6 +1,7 @@
 // Lambda function to get user conversations, this version has no pagination
 // - it will validate and extract the username from the input access token
 // - Add pagination support (with LastEvaluatedKey)
+// - vegorla: limit the number of conversations in the response
 
 import { DynamoDBClient, QueryCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";

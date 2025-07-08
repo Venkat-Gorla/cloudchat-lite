@@ -23,7 +23,7 @@ const fetchMessagesForConversation = async (conversationId) => {
 (async () => {
   const [, , username] = process.argv;
   if (!username) {
-    console.error("Usage: node ddb-messages-query.js <username>");
+    console.error("Usage: node ddb-messages-fetch.js <username>");
     process.exit(1);
   }
 

@@ -33,7 +33,7 @@ export const handler = async (event) => {
     return {
       statusCode: 500,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ error: "Unable to fetch users" }),
+      body: JSON.stringify({ error: err.message }),
     };
   }
 };
