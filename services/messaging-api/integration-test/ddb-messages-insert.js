@@ -47,7 +47,7 @@ const writeTestData = async () => {
       ...createMessageItems(convo.conversationId, convo.messages, now)
     );
     const lastMessage = convo.messages[convo.messages.length - 1];
-    const ts = now + convo.messages.length * 1000; // Last message timestamp
+    const ts = now + (convo.messages.length - 1) * 1000; // Last message timestamp
 
     const sortedUniqueParticipants = getSortedUniqueParticipants(
       convo.participants
