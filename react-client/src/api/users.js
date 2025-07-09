@@ -8,14 +8,5 @@ import { ENDPOINTS } from "./endpoints.js";
  * @param {string} accessToken - JWT access token
  * @returns {Promise<{ success: boolean, data: object[] | null, error: string | null }>}
  */
-export async function getUserDirectory(accessToken) {
-  const result = await callLambdaWithGet(ENDPOINTS.getUsers, {}, accessToken);
-
-  if (!result.success) return result;
-
-  return {
-    success: true,
-    data: result.data, // already formatted from Lambda
-    error: null,
-  };
-}
+export const getUserDirectory = (accessToken) =>
+  callLambdaWithGet(ENDPOINTS.getUsers, {}, accessToken);
