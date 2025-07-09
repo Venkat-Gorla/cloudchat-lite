@@ -5,6 +5,8 @@ export const ENDPOINTS = {
   getUsers:
     "https://wjl4ghh3rk.execute-api.ap-south-1.amazonaws.com/dev/auth/list-users",
 
-  getConversations: "https://your-lambda-url.aws-region.on.aws/",
+  getConversations:
+    "https://wjl4ghh3rk.execute-api.ap-south-1.amazonaws.com/dev/user/conversations",
+
   getMessages: "https://your-messages-lambda-url.aws-region.on.aws/",
 };

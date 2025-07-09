@@ -1,4 +1,5 @@
-import api from "./client";
+import { callLambdaWithGet } from "./client.js";
+import { ENDPOINTS } from "./endpoints.js";
 import { fetchMockConversationsForUser } from "./mock-conversations.js";
 
 export async function fetchConversationsForUser(userId, delayMs = 500) {
@@ -12,8 +13,5 @@ export async function fetchConversationsForUser(userId, delayMs = 500) {
   return fetchMockConversationsForUser(userId);
 }
 
-const LAMBDA_CONVERSATION_URL = "https://your-lambda-url.aws-region.on.aws/";
-
-function getConversationsForUser(userId) {
-  return api.post(LAMBDA_CONVERSATION_URL, { userId });
-}
+export const getConversationsForUser = (accessToken) =>
+  callLambdaWithGet(ENDPOINTS.getConversations, {}, accessToken);
