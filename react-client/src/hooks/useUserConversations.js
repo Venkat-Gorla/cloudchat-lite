@@ -1,11 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchConversationsForUser } from "../api/conversations";
+import { getConversationsForUser } from "../api/conversations";
+import { useAuth } from "../context/AuthContext";
 
-export default function useUserConversations(userId) {
+export default function useUserConversations() {
+  const { getAccessToken } = useAuth();
+  const accessToken = getAccessToken();
+  const userId = "alice"; // vegorla TEMP hard-coded
+
   return useQuery({
     queryKey: ["conversations", userId],
-    queryFn: () => fetchConversationsForUser(userId),
-    enabled: Boolean(userId),
+    queryFn: () => getConversationsForUser(accessToken, userId),
     staleTime: 5 * 60 * 1000,
     cacheTime: 30 * 60 * 1000,
   });

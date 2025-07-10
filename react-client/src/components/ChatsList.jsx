@@ -14,7 +14,7 @@ export default function ChatsList() {
     data: chats = [],
     isLoading,
     isError,
-  } = useUserConversations("alice"); // vegorla: Replace with real user
+  } = useUserConversations(); // vegorla: Replace with real user
 
   return (
     <div className="list-group flex-grow-1 overflow-auto rounded-0">

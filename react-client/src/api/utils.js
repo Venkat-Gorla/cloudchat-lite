@@ -1,6 +1,10 @@
 export function fetchConversationsForDisplay(conversations, userId) {
+  const filtered = conversations.filter((c) => c.UserId === `USER#${userId}`);
+  return formatConversationsForDisplay(filtered, userId);
+}
+
+export function formatConversationsForDisplay(conversations, userId) {
   return conversations
-    .filter((c) => c.UserId === `USER#${userId}`)
     .sort((a, b) => b.LastTimestamp - a.LastTimestamp)
     .map((c) => ({
       id: c.ConversationIndex,

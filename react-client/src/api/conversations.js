@@ -1,17 +1,21 @@
 import { callLambdaWithGet } from "./client.js";
 import { ENDPOINTS } from "./endpoints.js";
-import { fetchMockConversationsForUser } from "./mock-conversations.js";
+import { formatConversationsForDisplay } from "./utils.js";
 
-export async function fetchConversationsForUser(userId, delayMs = 500) {
-  if (delayMs > 0) {
-    await new Promise((res) => setTimeout(res, delayMs)); // simulate delay
+export const getConversationsForUser = async (accessToken, userId) => {
+  const result = await callLambdaWithGet(
+    ENDPOINTS.getConversations,
+    {},
+    accessToken
+  );
+
+  // vegorla: how to integrate this error with UI?
+  if (!result.success) {
+    throw new Error(result.error || "Failed to load conversations");
   }
 
-  // if you want to simulate failure and the test the UI
-  // return Promise.reject(new Error("Simulated network failure"));
+  const conversations = result.data || [];
+  if (conversations.length === 0) return [];
 
-  return fetchMockConversationsForUser(userId);
-}
-
-export const getConversationsForUser = (accessToken) =>
-  callLambdaWithGet(ENDPOINTS.getConversations, {}, accessToken);
+  return formatConversationsForDisplay(conversations, userId);
+};
