@@ -10,11 +10,7 @@ import useUserConversations from "../hooks/useUserConversations";
 
 export default function ChatsList() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const {
-    data: chats = [],
-    isLoading,
-    isError,
-  } = useUserConversations(); // vegorla: Replace with real user
+  const { data: chats = [], isLoading, isError } = useUserConversations();
 
   return (
     <div className="list-group flex-grow-1 overflow-auto rounded-0">
