@@ -10,7 +10,12 @@ import useUserConversations from "../hooks/useUserConversations";
 
 export default function ChatsList() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { data: chats = [], isLoading, isError } = useUserConversations();
+  const {
+    data: chats = [],
+    isLoading,
+    isError,
+    error,
+  } = useUserConversations();
 
   return (
     <div className="list-group flex-grow-1 overflow-auto rounded-0">
@@ -24,7 +29,7 @@ export default function ChatsList() {
 
       {isError && (
         <div className="text-center text-secondary py-3">
-          Failed to load conversations.
+          {error?.message || "Failed to load conversations."}
         </div>
       )}
 

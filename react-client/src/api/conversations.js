@@ -9,7 +9,6 @@ export const getConversationsForUser = async (accessToken, userId) => {
     accessToken
   );
 
-  // vegorla: how to integrate this error with UI?
   if (!result.success) {
     throw new Error(result.error || "Failed to load conversations");
   }
