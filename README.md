@@ -54,26 +54,54 @@ Frontend documentation lives in `react-client/README.md` (placeholder).
 
 ## 🧱 Architecture
 
-- **Serverless-first design**
-
-  - All compute via AWS Lambda
-  - Stateless handlers
-
-- **Authentication boundary**
-
-  - Cognito User Pool for identity
-  - JWT access tokens validated per request
-
-- **Data layer**
-
-  - DynamoDB single-table design
-  - Messages and conversation metadata co-located
-  - Design retained and refined in v2
-
-- **Security posture**
-
-  - RS256 token validation using Cognito JWKs
-  - IAM roles scoped per function (least privilege)
+```
+                        ┌─────────────────────┐
+                        │   React Web Client  │
+                        │   (SPA / Browser)   │
+                        └─────────┬───────────┘
+                                  │
+                    REST API (JWT │ Access Token)
+                                  │
+                    ┌─────────────▼─────────────┐
+                    │        AWS Lambda         │
+                    │   (Stateless Handlers)    │
+                    │───────────────────────────│
+                    │ - Auth validation         │
+                    │ - Conversation queries    │
+                    │ - Message operations      │
+                    └─────────────┬─────────────┘
+                                  │
+                 ┌────────────────▼────────────────┐
+                 │      Authentication Boundary    │
+                 │─────────────────────────────────│
+                 │  Amazon Cognito User Pool       │
+                 │  - User identity                │
+                 │  - JWT issuer                   │
+                 │  - JWKs (RS256)                 │
+                 └────────────────┬────────────────┘
+                                  │
+                 Verify Access Token (JWT + JWKs)
+                                  │
+                    ┌─────────────▼─────────────┐
+                    │        Data Layer         │
+                    │───────────────────────────│
+                    │   DynamoDB (Single Table) │
+                    │                           │
+                    │  - Conversation metadata  │
+                    │  - Message items          │
+                    │                           │
+                    │  GSI:                     │
+                    │  PK = user_id             │
+                    │  SK = conversation_id     │
+                    └─────────────┬─────────────┘
+                                  │
+                    Least-Privilege IAM Roles
+                                  │
+                        ┌─────────▼─────────┐
+                        │     AWS IAM       │
+                        │  (Per-Lambda)     │
+                        └───────────────────┘
+```
 
 ## 📚 Key Components
 
