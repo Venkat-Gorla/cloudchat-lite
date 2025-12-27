@@ -1,15 +1,18 @@
-# CloudChat Lite – Backend (v1)
+# CloudChat Lite – Full Stack Messaging App (v1)
 
-> **Serverless messaging backend · AWS-native · Security-first design** > **Status:** Feature-complete prototype · Continued and refined in v2
-> **Scope:** Backend only (frontend intentionally excluded)
+> **Full-stack messaging app · React + AWS · Security-first backend design**  
+> **Status:** Feature-complete prototype · Backend continued and refined in v2  
+> **Scope of this document:** Backend architecture and implementation
 
-CloudChat Lite is a **one-to-one messaging backend** designed to explore **secure, scalable serverless architectures on AWS**.
-This repository captures **v1** of the backend—highlighting strong fundamentals in **authentication, authorization, DynamoDB access patterns, and Infrastructure-as-Code**, while transparently documenting design limitations later resolved in **v2**.
+CloudChat Lite is a **one-to-one messaging web application** built with **React on the frontend** and a **serverless AWS backend**.
+
+This repository captures **v1 of the system**, with this document intentionally focusing on the **backend implementation**—highlighting strong fundamentals in **authentication, authorization, DynamoDB single-table design, and Infrastructure-as-Code**, while transparently documenting schema limitations that were resolved in **v2**.
 
 ## 🚀 Features
 
 - One-to-one conversation model
 - Fully asynchronous, stateless backend
+- React-based web client (documented separately)
 - Cognito-backed authentication with JWT validation
 - Secure access-token verification using JWKs (RS256)
 - Least-privilege IAM roles per Lambda
@@ -19,14 +22,20 @@ This repository captures **v1** of the backend—highlighting strong fundamental
 
 ## 🏗 Tech Stack
 
-- **Runtime:** Node.js (AWS Lambda)
-- **Infrastructure:** AWS + Serverless Framework
-- **Authentication:** Amazon Cognito (User Pools, JWT, JWKs)
-- **Database:** Amazon DynamoDB
-- **Security:** `jsonwebtoken`, `jwks-rsa`
-- **Deployment:** Infrastructure-as-Code (`serverless.yml`)
+| Layer    | Category       | Technology / Description                   |
+| -------- | -------------- | ------------------------------------------ |
+| Frontend | Framework      | React (SPA)                                |
+| Frontend | Communication  | REST-based communication with backend APIs |
+| Backend  | Runtime        | Node.js (AWS Lambda)                       |
+| Backend  | Infrastructure | AWS + Serverless Framework                 |
+| Backend  | Authentication | Amazon Cognito (User Pools, JWT, JWKs)     |
+| Backend  | Database       | Amazon DynamoDB                            |
+| Backend  | Security       | `jsonwebtoken`, `jwks-rsa`                 |
+| Backend  | Deployment     | Infrastructure-as-Code (`serverless.yml`)  |
 
 ## 📁 Project Structure
+
+<!-- vegorla, enhance with all files and folders -->
 
 ```
 cloudchat-lite/
@@ -37,9 +46,12 @@ cloudchat-lite/
         ├── utils/              # Auth and shared libraries
         ├── integration-test/   # CLI-based backend testing
         ├── serverless.yml      # Infra + IAM definitions
-        ├── lambda.yml
-        └── package.json
+        ├── lambda.yml          # Lambda deployment
+        └── package.json        # Dependency management
 ```
+
+📌 **Note:**
+Frontend documentation lives in `react-client/README.md` (placeholder).
 
 ## 🧱 Architecture
 
@@ -57,6 +69,7 @@ cloudchat-lite/
 
   - DynamoDB single-table design
   - Messages and conversation metadata co-located
+  - Design retained and refined in v2
 
 - **Security posture**
 
@@ -78,7 +91,6 @@ cloudchat-lite/
 - Conversations queried via DynamoDB GSI
 - User identity derived exclusively from access token
 - Metadata rows enriched with sorted, de-duplicated participants
-- Client-side sorting required (v1 tradeoff)
 
 ### Admin Model
 
@@ -86,7 +98,7 @@ cloudchat-lite/
 - End users can authenticate but not self-register
 - Suitable for controlled, personal deployments
 
-## 📦 Quick Start
+## 📦 Quick Start (Backend)
 
 > Assumes AWS credentials with permissions to deploy Cognito, DynamoDB, and Lambda.
 
@@ -115,30 +127,46 @@ Located in `integration-test/`:
 
 ## 📌 Project Goals
 
-- Demonstrate secure, production-style Cognito integration
+- Build a production-style full-stack messaging app
+- Demonstrate secure, real-world Cognito integration
 - Explore DynamoDB access patterns for chat workloads
 - Apply Infrastructure-as-Code and least-privilege IAM
-- Build reusable authentication primitives for Lambdas
-- Identify and document architectural tradeoffs early
+- Treat schema tradeoffs as explicit learning inputs
 
-## 🔮 Future Enhancements (Implemented in v2)
+## 🔮 Known Limitations (v1) & v2 Fixes
 
-<!-- vegorla, refer v2 Readme -->
+> **These limitations are deliberate learning points and are fully addressed in v2.**
 
-> **Known limitations in v1 are intentional learning points.**
+### v1 Limitations
 
-- ❌ Mixed message + metadata rows in a single table
-- ❌ No server-side pagination
+- ❌ **Message sort key uses timestamp**
+
+  - Risk of collisions and overwrites under concurrent writes
+
+- ❌ **Conversation GSI uses**
+
+  - `PK = user_id`
+  - `SK = conversation_id`
+  - Prevents server-side time-based sorting and pagination
+  - Client must fetch all conversations and sort locally
+
 - ❌ Limited scalability for high-volume conversations
 
-**v2 addresses:**
+### v2 Improvements
 
-- Refined DynamoDB schema
-- Clear separation of concerns
-- Improved query patterns and scalability
-- Cleaner domain boundaries
+- ✅ Improved query patterns and scalability
 
-📌 _See the v2 repository for the evolved backend architecture._
+- ✅ Message sort key uses **ULID**
+
+  - Guarantees uniqueness and preserves time ordering
+
+- ✅ Conversation GSI redesigned as:
+
+  - `PK = user_id`
+  - `SK = last_message_timestamp#conversation_id`
+  - Enables efficient server-side sorting and pagination
+
+📌 _See the v2 repository README for the evolved backend schema and access patterns._
 
 ## 🏷️ License
 
