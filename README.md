@@ -35,19 +35,18 @@ This repository captures **v1 of the system**, with this document intentionally 
 
 ## 📁 Project Structure
 
-<!-- vegorla, enhance with all files and folders -->
-
 ```
 cloudchat-lite/
 └── services/
     └── messaging-api/
-        ├── constants.js        # Shared AWS config and identifiers
         ├── handlers/           # Lambda entry points
         ├── utils/              # Auth and shared libraries
         ├── integration-test/   # CLI-based backend testing
+        ├── constants.js        # Shared AWS config and identifiers
         ├── serverless.yml      # Infra + IAM definitions
         ├── lambda.yml          # Lambda deployment
         └── package.json        # Dependency management
+└── react-client/
 ```
 
 📌 **Note:**
@@ -139,6 +138,8 @@ Located in `integration-test/`:
 
 ### v1 Limitations
 
+- ❌ Limited scalability for high-volume conversations
+
 - ❌ **Message sort key uses timestamp**
 
   - Risk of collisions and overwrites under concurrent writes
@@ -149,8 +150,6 @@ Located in `integration-test/`:
   - `SK = conversation_id`
   - Prevents server-side time-based sorting and pagination
   - Client must fetch all conversations and sort locally
-
-- ❌ Limited scalability for high-volume conversations
 
 ### v2 Improvements
 
