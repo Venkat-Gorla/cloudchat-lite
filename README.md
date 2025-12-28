@@ -1,4 +1,4 @@
-# CloudChat Lite – Full Stack Messaging App (v1)
+# 💬 CloudChat Lite – Full Stack Messaging App (v1)
 
 > **Full-stack messaging app · React + AWS · Security-first backend design**  
 > **Status:** Feature-complete prototype · Backend continued and refined in v2  
@@ -10,28 +10,23 @@ This repository captures **v1 of the system**, with this document intentionally 
 
 ## 🚀 Features
 
-- One-to-one conversation model
-- Fully asynchronous, stateless backend
-- React-based web client (documented separately)
-- Cognito-backed authentication with JWT validation
-- Secure access-token verification using JWKs (RS256)
-- Least-privilege IAM roles per Lambda
-- DynamoDB single-table design (messages + metadata)
-- CLI-based integration testing utilities
-- Serverless Framework–managed infrastructure
+- One-to-one messaging with a stateless, serverless backend
+- Secure Cognito authentication with JWT + JWK-based verification
+- DynamoDB single-table design for messages and conversations
+- Least-privilege IAM enforced per Lambda
+- CLI-based end-to-end integration and auth testing
+- React web client (documented separately)
 
-## 🏗 Tech Stack
+## 🏗 Tech Stack (Backend)
 
-| Layer    | Category       | Technology / Description                   |
-| -------- | -------------- | ------------------------------------------ |
-| Frontend | Framework      | React (SPA)                                |
-| Frontend | Communication  | REST-based communication with backend APIs |
-| Backend  | Runtime        | Node.js (AWS Lambda)                       |
-| Backend  | Infrastructure | AWS + Serverless Framework                 |
-| Backend  | Authentication | Amazon Cognito (User Pools, JWT, JWKs)     |
-| Backend  | Database       | Amazon DynamoDB                            |
-| Backend  | Security       | `jsonwebtoken`, `jwks-rsa`                 |
-| Backend  | Deployment     | Infrastructure-as-Code (`serverless.yml`)  |
+| Area           | Technology / Description                  |
+| -------------- | ----------------------------------------- |
+| Runtime        | Node.js (AWS Lambda)                      |
+| Infrastructure | AWS + Serverless Framework                |
+| Authentication | Amazon Cognito (User Pools, JWT, JWKs)    |
+| Database       | Amazon DynamoDB (single-table design)     |
+| Security       | `jsonwebtoken`, `jwks-rsa`                |
+| Deployment     | Infrastructure-as-Code (`serverless.yml`) |
 
 ## 📁 Project Structure
 
@@ -62,14 +57,15 @@ Frontend documentation lives in `react-client/README.md` (placeholder).
                                   │
                     REST API (JWT │ Access Token)
                                   │
-                    ┌─────────────▼─────────────┐
-                    │        AWS Lambda         │
-                    │   (Stateless Handlers)    │
-                    │───────────────────────────│
-                    │ - Auth validation         │
-                    │ - Conversation queries    │
-                    │ - Message operations      │
-                    └─────────────┬─────────────┘
+                    ┌─────────────▼───────────────┐
+                    │        AWS Lambda           │
+                    │   (Stateless Handlers)      │
+                    │─────────────────────────────│
+                    │ - Auth validation           │
+                    │ - Conversation queries      │
+                    │ - Message operations        │
+                    │ - List users (address book) │
+                    └─────────────┬───────────────┘
                                   │
                  ┌────────────────▼────────────────┐
                  │      Authentication Boundary    │
@@ -137,20 +133,42 @@ serverless deploy
 
 ## 🧪 Testing
 
-### Integration Testing Utilities
+### Operational & Integration Tooling
 
 Located in `integration-test/`:
 
 - **`ddb-messages-insert.js`**
 
   - Inserts realistic conversation metadata and message rows
-  - Enables repeatable backend testing without frontend
+  - Enables repeatable backend testing without frontend dependency
 
 - **`ddb-messages-fetch.js`**
 
-  - CLI utility to query and print conversations/messages
+  - CLI utility to fetch and print conversations and messages
   - Input: Cognito username
-  - Validates access patterns and sorting behavior
+  - Validates DynamoDB access patterns and sorting behavior
+
+- **`auth/admin-cli.js`**
+
+  - Admin CLI for creating new Cognito users
+  - Exercises Cognito admin APIs used by the backend
+
+- **`auth/login-cli.js`**
+
+  - End-user login via Cognito
+  - Validates returned ID and access tokens
+  - Used to verify authentication and token integrity
+
+- **`auth/get-conversations-cli.js`**
+
+  - Authenticates a user via Cognito
+  - Fetches conversations using real access tokens
+  - Validates end-to-end auth → Lambda → DynamoDB flow
+
+- **`auth/list-users-cli.js`**
+
+  - Authenticates and lists Cognito users
+  - Acts as an address book for initiating conversations
 
 ## 📌 Project Goals
 
@@ -194,6 +212,10 @@ Located in `integration-test/`:
   - Enables efficient server-side sorting and pagination
 
 📌 _See the v2 repository README for the evolved backend schema and access patterns._
+
+## 🧠 What I’d Do Differently If Starting Today
+
+I would design DynamoDB GSIs directly from access patterns, even when pagination initially appears unnecessary. As requirements evolved, I refined the schema to encode time-ordering into GSI sort keys, enabling server-side sorting while preserving the single-table design.
 
 ## 🏷️ License
 
