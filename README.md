@@ -1,5 +1,11 @@
 # 💬 CloudChat Lite – Full Stack Messaging App (v1)
 
+![AWS](https://img.shields.io/badge/AWS-Serverless-orange)
+![Node.js](https://img.shields.io/badge/Node.js-Lambda-green)
+![DynamoDB](https://img.shields.io/badge/DynamoDB-Single--Table-blue)
+![Cognito](https://img.shields.io/badge/Auth-Amazon%20Cognito-purple)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 > **Full-stack messaging app · React + AWS · Security-first backend design**  
 > **Status:** Feature-complete prototype · Backend continued and refined in v2  
 > **Scope of this document:** Backend architecture and implementation
@@ -7,6 +13,20 @@
 CloudChat Lite is a **one-to-one messaging web application** built with **React on the frontend** and a **serverless AWS backend**.
 
 This repository captures **v1 of the system**, with this document intentionally focusing on the **backend implementation**—highlighting strong fundamentals in **authentication, authorization, DynamoDB single-table design, and Infrastructure-as-Code**, while transparently documenting schema limitations that were resolved in **v2**.
+
+## 📑 Table of Contents
+
+- [🚀 Features](#-features)
+- [🏗 Tech Stack (Backend)](#-tech-stack-backend)
+- [📁 Project Structure](#-project-structure)
+- [🧱 Architecture](#-architecture)
+- [📚 Key Components](#-key-components)
+- [📦 Quick Start (Backend)](#-quick-start-backend)
+- [🧪 Testing](#-testing)
+- [📌 Project Goals](#-project-goals)
+- [🔮 Known Limitations (v1) & v2 Fixes](#-known-limitations-v1--v2-fixes)
+- [🧠 What I’d Do Differently If Starting Today](#-what-id-do-differently-if-starting-today)
+- [🏷️ License](#-license)
 
 ## 🚀 Features
 
@@ -169,6 +189,27 @@ Located in `integration-test/`:
 
   - Authenticates and lists Cognito users
   - Acts as an address book for initiating conversations
+
+### ✅ Tests in Action
+
+```bash
+node ddb-messages-fetch.js alice
+```
+
+**Test Output:**
+
+```
+Fetching conversations for user: alice
+
+Convo: CONV#alice#bob
+ Participants: [ 'alice', 'bob' ]
+ - [alice] Hi Bob!
+ - [bob] Hey Alice!
+Convo: CONV#alice#carol
+ Participants: [ 'alice', 'carol' ]
+ - [carol] Hi Alice!
+ - [alice] How are you Carol?
+```
 
 ## 📌 Project Goals
 
