@@ -7,7 +7,8 @@ import { AWS_REGION, MESSAGES_TABLE_NAME } from "../constants.js";
 
 const ddb = new DynamoDBClient({ region: AWS_REGION });
 
-// vegorla schema changes: every message should have an id, unrelated to partition or sort key
+// TODO schema changes: every message should have an id, unrelated to partition or sort key.
+// addressed in v2
 const testData = [
   // Conversation 1: alice-bob
   {

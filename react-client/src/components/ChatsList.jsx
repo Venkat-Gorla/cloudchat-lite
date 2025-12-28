@@ -1,4 +1,4 @@
-// vegorla: Improvements:
+// TODO: Improvements:
 // - chat list should always be sorted dynamically when new messages arrive,
 //   it should Not change the current selection though.
 // const sortedChats = [...chats].sort((a, b) => b.timestamp - a.timestamp);
