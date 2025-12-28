@@ -119,6 +119,10 @@ Frontend documentation lives in `react-client/README.md` (placeholder).
                         └───────────────────┘
 ```
 
+### 🔐 Security Posture
+
+**Security:** API Gateway–only access, Cognito JWT authentication, JWK-based token verification, strict IAM scoping, and conservative throttling for abuse and cost protection.
+
 ## 📚 Key Components
 
 ### Authentication & Authorization
