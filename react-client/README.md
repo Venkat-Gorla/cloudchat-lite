@@ -80,5 +80,5 @@ npx vitest run
 
 > **All UI screenshots reflect live data returned from the backend APIs.**
 
-<img src="./screenshots/login.png" alt="Login Page" width="700" />
-<img src="./screenshots/chats.png" alt="Chats Page" width="700" />
+<img src="./screenshots/login.PNG" alt="Login Page" width="700" />
+<img src="./screenshots/chats.PNG" alt="Chats Page" width="700" />
