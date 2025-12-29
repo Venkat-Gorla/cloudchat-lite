@@ -5,6 +5,19 @@
 
 CloudChat Lite’s React client is a **single-page application** built to demonstrate modern React fundamentals: **composition, state isolation, async data management, routing, and backend integration**—with clear separation of concerns and production-oriented structure.
 
+## 🏗 Tech Stack & Frontend Capabilities
+
+| Area                    | Technology / Implementation                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| Framework               | React (Vite-based SPA)                                       |
+| Routing                 | React Router (protected routes, redirects)                   |
+| State Management        | React Context + custom hooks                                 |
+| Server State            | React Query (conversation list caching & lifecycle handling) |
+| API Integration         | Axios with centralized abstraction layer                     |
+| Authentication Handling | Context-driven auth state + route guards                     |
+| UI & Layout             | Bootstrap (responsive, column-based layout)                  |
+| Architecture            | Feature-based folders, clear separation of concerns          |
+
 ## Implemented Use Cases
 
 - User authentication (login flow)
@@ -16,48 +29,27 @@ CloudChat Lite’s React client is a **single-page application** built to demons
 
 - Message list retrieval and rendering per conversation
 
-## Core Frontend Capabilities
+## Architecture Notes (Selective Detail)
 
-### Application Architecture
+### Application Composition
 
 - Root composition via **nested context providers**
   - `AuthProvider` for authentication state
-  - `PhonebookProvider` for contact data
-- Centralized routing layer (`AppRoutes`)
+  - `PhonebookProvider` for shared contact data
+- Centralized routing via `AppRoutes`
 - Explicit separation between **pages**, **components**, **hooks**, and **API layer**
-
-### Routing & Access Control
-
-- **React Router** for SPA navigation
-- **Protected routes** enforcing authentication boundaries
-- Predictable redirect behavior for unknown paths
-
-### State & Data Management
-
-- **React Context** for global, cross-cutting concerns
-- **Custom hooks** encapsulating domain logic and side effects
-- **React Query**
-  - Server-state management for conversations
-  - Caching, refetching, and lifecycle control
 
 ### Backend Integration
 
-- **Axios abstraction layer** (`src/api/client.js`)
-- Centralized HTTP configuration and auth token handling
-- Explicit GET / POST helpers aligned with backend Lambdas
+- Axios abstraction located at `src/api/client.js`
+- Consistent GET / POST helpers aligned with backend Lambdas
 
 ```js
 callLambdaWithPost(endpoint, payload, accessToken);
 callLambdaWithGet(endpoint, queryParams, accessToken);
 ```
 
-### UI & Layout
-
-- **Bootstrap** for responsive, column-based layouts
-- Clear separation of layout vs. business logic
-- Component-driven page composition
-
 ## Status
 
 Frontend v1 is intentionally scoped to **authentication, contacts, and conversation discovery**.
-The client cleanly demonstrates extensibility for message rendering and pagination in later iterations.
+The client is structured to support message rendering, pagination, and richer UI state in subsequent iterations.
