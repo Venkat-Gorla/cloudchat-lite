@@ -65,7 +65,7 @@ cloudchat-lite/
 ```
 
 📌 **Note:**
-Frontend documentation lives in `react-client/README.md` (placeholder).
+Frontend documentation lives in [react-client/README.md](./react-client/README.md).
 
 ## 🧱 Architecture
 
