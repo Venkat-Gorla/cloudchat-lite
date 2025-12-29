@@ -65,6 +65,15 @@ The client is structured to support message rendering, pagination, and richer UI
 
 Screenshots and test output are included to demonstrate UI behavior and engineering rigor.
 
+- Unit test execution using Vitest & React Testing Library
 - Login flow and authenticated routing
 - Address book and conversation list rendering
-- Unit test execution using Vitest & React Testing Library
+
+**Test runner:** Vitest + React Testing Library  
+**Command:**
+
+```bash
+npx vitest run
+```
+
+![Vitest Output](./screenshots/vitest-run.PNG)
