@@ -1,9 +1,9 @@
 # 💬 CloudChat Lite — React Client (v1)
 
-> **Production-style React SPA · Auth-aware routing · API-driven state management**  
+> **Production-style React SPA · Auth-aware routing · Explicit client/server state separation**  
 > **Scope:** Frontend architecture, React patterns, and client-side integration
 
-CloudChat Lite’s React client is a **single-page application** built to demonstrate modern React fundamentals: **composition, state isolation, async data management, routing, and backend integration**—with clear separation of concerns and production-oriented structure.
+CloudChat Lite’s React client is a **single-page application** built to demonstrate modern React fundamentals: **composition, state isolation, async data management, routing, and backend integration**.
 
 ## 🏗 Tech Stack & Frontend Capabilities
 
@@ -17,6 +17,7 @@ CloudChat Lite’s React client is a **single-page application** built to demons
 | Authentication Handling | Context-driven auth state + route guards                     |
 | UI & Layout             | Bootstrap (responsive, column-based layout)                  |
 | Architecture            | Feature-based folders, clear separation of concerns          |
+| Testing & Quality       | Vitest & RTL unit tests                                      |
 
 ## Implemented Use Cases
 
@@ -37,7 +38,6 @@ CloudChat Lite’s React client is a **single-page application** built to demons
   - `AuthProvider` for authentication state
   - `PhonebookProvider` for shared contact data
 - Centralized routing via `AppRoutes`
-- Explicit separation between **pages**, **components**, **hooks**, and **API layer**
 
 ### Backend Integration
 
