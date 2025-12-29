@@ -1,12 +1,63 @@
-# React + Vite
+# 💬 CloudChat Lite — React Client (v1)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Production-style React SPA · Auth-aware routing · API-driven state management**  
+> **Scope:** Frontend architecture, React patterns, and client-side integration
 
-Currently, two official plugins are available:
+CloudChat Lite’s React client is a **single-page application** built to demonstrate modern React fundamentals: **composition, state isolation, async data management, routing, and backend integration**—with clear separation of concerns and production-oriented structure.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Implemented Use Cases
 
-## Expanding the ESLint configuration
+- User authentication (login flow)
+- Address book retrieval and display
+  - Client-side user search
+- Conversation list retrieval for authenticated user
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Not Implemented (v1)
+
+- Message list retrieval and rendering per conversation
+
+## Core Frontend Capabilities
+
+### Application Architecture
+
+- Root composition via **nested context providers**
+  - `AuthProvider` for authentication state
+  - `PhonebookProvider` for contact data
+- Centralized routing layer (`AppRoutes`)
+- Explicit separation between **pages**, **components**, **hooks**, and **API layer**
+
+### Routing & Access Control
+
+- **React Router** for SPA navigation
+- **Protected routes** enforcing authentication boundaries
+- Predictable redirect behavior for unknown paths
+
+### State & Data Management
+
+- **React Context** for global, cross-cutting concerns
+- **Custom hooks** encapsulating domain logic and side effects
+- **React Query**
+  - Server-state management for conversations
+  - Caching, refetching, and lifecycle control
+
+### Backend Integration
+
+- **Axios abstraction layer** (`src/api/client.js`)
+- Centralized HTTP configuration and auth token handling
+- Explicit GET / POST helpers aligned with backend Lambdas
+
+```js
+callLambdaWithPost(endpoint, payload, accessToken);
+callLambdaWithGet(endpoint, queryParams, accessToken);
+```
+
+### UI & Layout
+
+- **Bootstrap** for responsive, column-based layouts
+- Clear separation of layout vs. business logic
+- Component-driven page composition
+
+## Status
+
+Frontend v1 is intentionally scoped to **authentication, contacts, and conversation discovery**.
+The client cleanly demonstrates extensibility for message rendering and pagination in later iterations.
