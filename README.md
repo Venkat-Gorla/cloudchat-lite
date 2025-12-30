@@ -225,8 +225,6 @@ Convo: CONV#alice#carol
 
 ## 🔮 Known Limitations (v1) & v2 Fixes
 
-> **These limitations are deliberate learning points and are fully addressed in v2.**
-
 ### v1 Limitations
 
 - ❌ Limited scalability for high-volume conversations
