@@ -1,4 +1,4 @@
-# 💬 CloudChat Lite – Full Stack Messaging App (v1)
+# 💬 CloudChat-Lite – Full Stack Messaging App (v1)
 
 ![AWS](https://img.shields.io/badge/AWS-Serverless-orange)
 ![Node.js](https://img.shields.io/badge/Node.js-Lambda-green)
@@ -10,7 +10,7 @@
 > **Status:** Feature-complete prototype · Backend continued and refined in v2  
 > **Scope of this document:** Backend architecture and implementation
 
-CloudChat Lite is a **one-to-one messaging web application** built with **React on the frontend** and a **serverless AWS backend**.
+CloudChat-Lite is a **one-to-one messaging web application** built with **React on the frontend** and a **serverless AWS backend**.
 
 This repository captures **v1 of the system**, with this document intentionally focusing on the **backend implementation**—highlighting strong fundamentals in **authentication, authorization, DynamoDB single-table design, and Infrastructure-as-Code**, while transparently documenting schema limitations that were resolved in **v2**.
 
